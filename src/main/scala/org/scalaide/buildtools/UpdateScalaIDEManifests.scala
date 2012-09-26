@@ -22,7 +22,7 @@ object UpdateScalaIDEManifests {
   final val ScalaCompilerInManifest = ("(.*)" + ScalaCompilerId + "(,?.*)").r
   final val ScalaCompilerInManifestWithVersion = ("(.*)" + ScalaCompilerId + """;bundle-version="([^"]*)"(,?.*)""").r
 
-  final val projectsToUpdate = List("org.scala-ide.sdt.core")
+  final val projectsToUpdate = List("org.scala-ide.sdt.core", "org.scala-ide.sdt.debug")
 
   def main(args: Array[String]) {
     // parse arguments
@@ -34,7 +34,7 @@ object UpdateScalaIDEManifests {
 
     
 
-    new UpdateScalaIDEManifests(rootFolder)
+    new UpdateScalaIDEManifests(rootFolder)()
   }
 
 }
