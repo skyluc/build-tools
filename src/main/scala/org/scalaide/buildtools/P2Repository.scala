@@ -58,8 +58,8 @@ object P2Repository {
   }
 
   def getContentsFromZipFile(file: File): Either[String, Elem] = {
+    val zipFile = new ZipFile(file)
     try {
-      val zipFile = new ZipFile(file)
       val entry = zipFile.getEntry("content.xml")
       if (entry == null) Left("Could not find 'content.xml' in 'content.jar'")
       else {
@@ -70,6 +70,7 @@ object P2Repository {
       case io: IOException  => Left("Error reading zip file: " + io.getMessage())
       case ze: ZipException => Left("Invalid zip file: " + ze.getMessage())
       case se: SAXException => Left("Error parsing XML file: " + se.getMessage())
-    }
+    } finally
+      zipFile.close()
   }
 }
