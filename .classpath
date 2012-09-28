@@ -1,7 +1,18 @@
 <classpath>
-  <classpathentry output="target/scala-2.9.2/classes" path="src/main/scala" kind="src"></classpathentry>
-  <classpathentry output="target/scala-2.9.2/test-classes" path="src/test/scala" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.9.1/classes" path="src/main/scala" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.9.1/classes" path="src/main/java" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.9.1/test-classes" path="src/test/scala" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.9.1/test-classes" path="src/test/java" kind="src"></classpathentry>
   <classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"></classpathentry>
+  <classpathentry kind="lib" path="/home/luc/.ivy2/cache/net.databinder.dispatch/core_2.9.1/jars/core_2.9.1-0.9.1.jar" sourcepath="/home/luc/.ivy2/cache/net.databinder.dispatch/core_2.9.1/srcs/core_2.9.1-0.9.1-sources.jar"></classpathentry>
+  <classpathentry kind="lib" path="/home/luc/.ivy2/cache/com.ning/async-http-client/jars/async-http-client-1.7.5.jar" sourcepath="/home/luc/.ivy2/cache/com.ning/async-http-client/srcs/async-http-client-1.7.5-sources.jar"></classpathentry>
+  <classpathentry kind="lib" path="/home/luc/.ivy2/cache/io.netty/netty/bundles/netty-3.4.4.Final.jar" sourcepath="/home/luc/.ivy2/cache/io.netty/netty/srcs/netty-3.4.4.Final-sources.jar"></classpathentry>
+  <classpathentry kind="lib" path="/home/luc/.ivy2/cache/org.slf4j/slf4j-api/jars/slf4j-api-1.6.2.jar" sourcepath="/home/luc/.ivy2/cache/org.slf4j/slf4j-api/srcs/slf4j-api-1.6.2-sources.jar"></classpathentry>
+  <classpathentry kind="lib" path="/home/luc/.ivy2/cache/junit/junit/jars/junit-4.8.1.jar" sourcepath="/home/luc/.ivy2/cache/junit/junit/srcs/junit-4.8.1-sources.jar"></classpathentry>
+  <classpathentry kind="lib" path="/home/luc/.ivy2/cache/com.novocode/junit-interface/jars/junit-interface-0.10-M1.jar" sourcepath="/home/luc/.ivy2/cache/com.novocode/junit-interface/srcs/junit-interface-0.10-M1-sources.jar"></classpathentry>
+  <classpathentry kind="lib" path="/home/luc/.ivy2/cache/junit/junit-dep/jars/junit-dep-4.10.jar" sourcepath="/home/luc/.ivy2/cache/junit/junit-dep/srcs/junit-dep-4.10-sources.jar"></classpathentry>
+  <classpathentry kind="lib" path="/home/luc/.ivy2/cache/org.hamcrest/hamcrest-core/jars/hamcrest-core-1.1.jar" sourcepath="/home/luc/.ivy2/cache/org.hamcrest/hamcrest-core/srcs/hamcrest-core-1.1-sources.jar"></classpathentry>
+  <classpathentry path="/home/luc/.ivy2/cache/org.scala-tools.testing/test-interface/jars/test-interface-0.5.jar" kind="lib"></classpathentry>
   <classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" kind="con"></classpathentry>
   <classpathentry path="bin" kind="output"></classpathentry>
 </classpath>

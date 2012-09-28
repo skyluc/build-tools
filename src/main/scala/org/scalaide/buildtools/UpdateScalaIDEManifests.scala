@@ -6,23 +6,22 @@ import java.io.FileWriter
 
 object UpdateScalaIDEManifests {
 
-  final val Usage = "app --root=<Scala IDE root folder>"
+  import Ecosystem._
+  
+  final val Usage = "Usage: app [--root=<Scala IDE root folder>]"
 
   final val PackagedManifestPath = "target/META-INF/MANIFEST.MF"
   final val BaseManifestPath = "META-INF/MANIFEST.MF"
   final val SavedManifestPath = "META-INF/MANIFEST.MF.original"
 
-  final val RootOption = "--root=(.*)".r
   final val BundleVersion = "Bundle-Version: (.*)".r
 
-  final val ScalaLibraryId = "org.scala-ide.scala.library"
   final val ScalaLibraryInManifest = ("(.*)" + ScalaLibraryId + "(,?.*)").r
   final val ScalaLibraryInManifestWithVersion = ("(.*)" + ScalaLibraryId + """;bundle-version="([^"]*)"(,?.*)""").r
-  final val ScalaCompilerId = "org.scala-ide.scala.compiler"
   final val ScalaCompilerInManifest = ("(.*)" + ScalaCompilerId + "(,?.*)").r
   final val ScalaCompilerInManifestWithVersion = ("(.*)" + ScalaCompilerId + """;bundle-version="([^"]*)"(,?.*)""").r
 
-  final val projectsToUpdate = List("org.scala-ide.sdt.core", "org.scala-ide.sdt.debug")
+  final val projectsToUpdate = List(ScalaIDEId, "org.scala-ide.sdt.debug")
 
   def main(args: Array[String]) {
     // parse arguments
@@ -32,8 +31,6 @@ object UpdateScalaIDEManifests {
         root
     }.getOrElse(System.getProperty("user.dir"))
 
-    
-
     new UpdateScalaIDEManifests(rootFolder)()
   }
 
@@ -41,6 +38,7 @@ object UpdateScalaIDEManifests {
 
 class UpdateScalaIDEManifests(root: String) {
   import UpdateScalaIDEManifests._
+  import Ecosystem._
 
   val rootFolder = new File(root)
 

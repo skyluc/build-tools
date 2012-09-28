@@ -9,6 +9,7 @@ import java.io.IOException
 import java.util.zip.ZipException
 import scala.xml.Elem
 import org.xml.sax.SAXException
+import java.net.URL
 
 /** An installable unit in a P2 repository */
 case class InstallableUnit(id: String, version: String)
@@ -26,6 +27,8 @@ class P2Repository(contentXml: Elem) {
 }
 
 object P2Repository {
+  
+  final val CompressedContentFile= "content.jar"
 
   def fromString(content: String): P2Repository = {
     new P2Repository(XML.loadString(content))
@@ -42,8 +45,29 @@ object P2Repository {
    *        to the current process.
    */
   def fromUrl(repoUrl: String): Either[String, P2Repository] = {
+    val url= new URL(repoUrl)
+    url.getProtocol() match {
+      case "file" =>
+        fromLocalFolder(url.getFile())
+      case _ =>
+        fromHttpUrl(repoUrl)
+    }
+  }
+  
+  def fromLocalFolder(repoFolder: String): Either[String, P2Repository] = {
+    val contentFile= new File(repoFolder, CompressedContentFile)
+    if (contentFile.exists && contentFile.isFile) {
+      for {
+        xml <- getContentsFromZipFile(contentFile).right
+      } yield new P2Repository(xml)
+    } else {
+      Left("%s doesn't exist, or is not a file".format(contentFile.getAbsolutePath()))
+    }
+  }
+
+  def fromHttpUrl(repoUrl: String): Either[String, P2Repository] = {
     val tmpFile = File.createTempFile("downloaded-content", ".jar")
-    val svc = url(repoUrl) / "content.jar"
+    val svc = url(repoUrl) / CompressedContentFile
 
     val downloadHandle = Http(svc > as.File(tmpFile)(null)).either
     //    try {
@@ -51,8 +75,8 @@ object P2Repository {
     val stringExceptionHandle = for (ex <- downloadHandle.left) yield "Error downloading file " + ex.getMessage()
 
     for {
-      val d <- stringExceptionHandle().right
-      val xml <- getContentsFromZipFile(tmpFile).right
+      d <- stringExceptionHandle().right
+      xml <- getContentsFromZipFile(tmpFile).right
     } yield new P2Repository(xml)
     //  } finally Http.shutdown()
   }
