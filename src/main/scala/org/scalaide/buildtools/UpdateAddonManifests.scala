@@ -1,12 +1,18 @@
 package org.scalaide.buildtools
 
-import dispatch.Http
 import java.io.File
+
+import scala.xml.Attribute
+import scala.xml.Elem
+import scala.xml.Null
+import scala.xml.XML
+
+import dispatch.Http
 
 object UpdateAddonManifests {
   import Ecosystem._
 
-  final val usage = "Usage: app [--root=<Scala IDE root folder>] <repository URL>"
+  final val usage = "Usage: app [--root=<Addon root folder>] <repository URL>"
 
   def main(args: Array[String]) {
     // parse arguments
@@ -49,60 +55,122 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
     P2Repository.fromUrl(repoURL).right.flatMap(updateVersions(_))
   }
 
+  /**
+   * Set strict version dependency to Scala IDE in the plugin and features found under the root, using the
+   * version numbers found in the given p2 repository
+   */
   private def updateVersions(p2Repo: P2Repository): Either[String, String] = {
     for {
       scalaIDEVersion <- getOneVersion(p2Repo, ScalaIDEId).right
       scalaLibraryVersion <- getOneVersion(p2Repo, ScalaLibraryId).right
       scalaCompilerVersion <- getOneVersion(p2Repo, ScalaCompilerId).right
-      result <- updateVersions(scalaIDEVersion, scalaLibraryVersion, scalaCompilerVersion).right
+      scalaIDEFeatureVersion <- getOneVersion(p2Repo, ScalaIDEFeatureIdOsgi).right
+      result <- updateVersions(scalaIDEVersion, scalaLibraryVersion, scalaCompilerVersion, scalaIDEFeatureVersion).right
     } yield result
 
   }
 
-  private def updateVersions(scalaIDEVersion: String, scalaLibraryVersion: String, scalaCompilerVersion: String): Either[String, String] = {
-    println("%s, %s, %s".format(scalaIDEVersion, scalaLibraryVersion, scalaCompilerVersion))
+  /**
+   * Set strict version dependency to Scala IDE in the plugin and features found under the root.
+   */
+  private def updateVersions(scalaIDEVersion: String, scalaLibraryVersion: String, scalaCompilerVersion: String, scalaIDEFeatureVersion: String): Either[String, String] = {
+    println("%s, %s, %s, %s".format(scalaIDEVersion, scalaLibraryVersion, scalaCompilerVersion, scalaIDEFeatureVersion))
 
     val root = new File(rootFolder)
 
+
     if (root.exists && root.isDirectory) {
-      val pluginManifestsResult = findPlugins(root).foldLeft[Either[String, String]](
-        Right("no plugin"))(
-          (res, manifest) => res.right.flatMap(r => updateVersionInPluginManifest(manifest, scalaIDEVersion, scalaLibraryVersion, scalaCompilerVersion)))
-      findFeatures(root).foldLeft(
-        pluginManifestsResult)(
-          (res, feature) => res.right.flatMap(r => updateVersionInFeature(feature, scalaIDEVersion, scalaLibraryVersion, scalaCompilerVersion)))
+      // update the plugin manifest files
+      val versionUpdater: PartialFunction[String, String] = updateVersionInManifest(ScalaLibraryId, scalaLibraryVersion).
+          orElse(updateVersionInManifest(ScalaCompilerId, scalaCompilerVersion)).
+          orElse(updateVersionInManifest(ScalaIDEId, scalaIDEVersion)).
+          orElse {
+          case line =>
+          line
+      }
+      findPlugins(root).foreach(updateVersionInPluginManifest(_, versionUpdater))
+      
+      // update the feature definition files
+      findFeatures(root).foreach(updateVersionInFeature(_, scalaIDEFeatureVersion))
+      
+      Right("OK")
     } else {
       Left("%s doesn't exist or is not a directory".format(root.getAbsolutePath()))
     }
   }
-
-  private def updateVersionInPluginManifest(manifest: File, scalaIDEVersion: String, scalaLibraryVersion: String, scalaCompilerVersion: String): Either[String, String] = {
+  
+  /**
+   * Set strict version dependency to the Scala IDE plugin in the given manifest file.
+   */
+  private def updateVersionInPluginManifest(manifest: File, versionUpdater: PartialFunction[String, String]) {
     println(manifest.getAbsoluteFile())
-    Right("OK")
+    
+    updateBundleManifest(manifest, versionUpdater)
   }
-
-  private def updateVersionInFeature(feature: File, scalaIDEVersion: String, scalaLibraryVersion: String, scalaCompilerVersion: String): Either[String, String] = {
+  
+  /**
+   * Go through the feature definition XML tree, and add version and match attribute for the reference to the scala IDE feature.
+   */
+  private def transformXML(e: Elem, version: String): Elem = {
+    if (e.attributes.get("feature").exists(_.text == ScalaIDEFeatureId)) {
+      e.copy(attributes = e.attributes.append(Attribute(null, "version", version, Attribute(null, "match", "perfect", Null))))
+    } else {
+      e.copy(child = e.child.map(_ match {
+        case e: Elem => transformXML(e, version)
+        case o => o
+      }))
+    }
+  }
+  
+  /**
+   * Set strict version dependency to Scala IDE feature in the given feature file.
+   */
+  private def updateVersionInFeature(feature: File, scalaIDEFeatureVersion: String): Either[String, String] = {
     println(feature.getAbsoluteFile())
+    
+    val savedFeature= new File(feature.getAbsolutePath() + OriginalSuffix)
+    
+    if (!savedFeature.exists) {
+      FileUtils.copyFile(feature, savedFeature)
+    }
+    
+    val xml= transformXML(XML.loadFile(savedFeature), scalaIDEFeatureVersion)
+    
+    XML.save(feature.getAbsolutePath(), xml, "UTF-8", true)
+    
     Right("OK")
   }
 
+  /**
+   * Return the unique version of a plugin available in the repository.
+   * Return an error if the plugin is not available, or more than one version is available.
+   */
   private def getOneVersion(p2Repo: P2Repository, pluginId: String): Either[String, String] = {
     p2Repo.findIU(pluginId) match {
       case Seq(iu) =>
         Right(iu.version)
-      case _ =>
+      case s =>
         Left("More than one version found for %s. You may not be using the right repository.".format(pluginId))
     }
   }
 
+  /**
+   * Return the list of manifest files found in the direct subfolders of the root
+   */
   private def findPlugins(root: File): List[File] = {
     findFileInSubFolders(root, PluginManifest)
   }
 
+  /**
+   * Return the list of feature definition files found in the direct subfolders of the root
+   */
   private def findFeatures(root: File): List[File] = {
     findFileInSubFolders(root, FeatureDescriptor)
   }
 
+  /**
+   * Return the list of instances of the given file existing in the direct subfolders of the root
+   */
   private def findFileInSubFolders(root: File, fileName: String): List[File] = {
     (for {
       folder <- root.listFiles().toList if (folder.isDirectory())
