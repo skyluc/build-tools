@@ -22,6 +22,9 @@ class P2RepositoryTest {
               <property name='org.eclipse.equinox.p2.description' value='Bundle containing the Scala library'/>
               <property name='org.eclipse.equinox.p2.provider' value='scala-ide.org'/>
             </properties>
+            <artifacts>
+              <artifact classifier='osgi.bundle'/>
+            </artifacts>
             <provides size='71'/>
           </unit>
         </units>
@@ -31,7 +34,7 @@ class P2RepositoryTest {
     
     val units = repo.findIU("org.scala-ide.scala.library")
     
-    Assert.assertEquals("Scala Library not found", Seq(InstallableUnit("org.scala-ide.scala.library", "2.10.0.v20120924-042318-ffaa3cb89e")), units)
+    Assert.assertEquals("Scala Library not found", Seq(InstallableUnit("org.scala-ide.scala.library", "2.10.0.v20120924-042318-ffaa3cb89e", Nil)), units)
   }
   
     @Test def testMultipleMatches() {
@@ -51,6 +54,9 @@ class P2RepositoryTest {
               <property name='org.eclipse.equinox.p2.description' value='Bundle containing the Scala library'/>
               <property name='org.eclipse.equinox.p2.provider' value='scala-ide.org'/>
             </properties>
+            <artifacts>
+              <artifact classifier='osgi.bundle'/>
+            </artifacts>
             <provides size='71'/>
           </unit>
           <unit id='org.scala-ide.scala.compiler' version='2.10.0.v20120924-042318-ffaa3cb89e' singleton='false'>
@@ -60,6 +66,9 @@ class P2RepositoryTest {
               <property name='org.eclipse.equinox.p2.description' value='Bundle containing the Scala library'/>
               <property name='org.eclipse.equinox.p2.provider' value='scala-ide.org'/>
             </properties>
+            <artifacts>
+              <artifact classifier='osgi.bundle'/>
+            </artifacts>
             <provides size='71'/>
           </unit>
           <unit id='org.scala-ide.sdt.core' version='2.10.0.v20120924-042318-ffaa3cb89e' singleton='false'>
@@ -69,6 +78,9 @@ class P2RepositoryTest {
               <property name='org.eclipse.equinox.p2.description' value='Bundle containing the Scala library'/>
               <property name='org.eclipse.equinox.p2.provider' value='scala-ide.org'/>
             </properties>
+            <artifacts>
+              <artifact classifier='osgi.bundle'/>
+            </artifacts>
             <provides size='71'/>
           </unit>
         </units>
@@ -79,9 +91,9 @@ class P2RepositoryTest {
     val units = repo.findIU("org.scala-ide.*")
     
     Assert.assertEquals("Scala Library not found", Seq(
-        InstallableUnit("org.scala-ide.scala.library", "2.10.0.v20120924-042318-ffaa3cb89e"),
-        InstallableUnit("org.scala-ide.scala.compiler", "2.10.0.v20120924-042318-ffaa3cb89e"),
-        InstallableUnit("org.scala-ide.sdt.core", "2.10.0.v20120924-042318-ffaa3cb89e")
-        ), units)
+        InstallableUnit("org.scala-ide.scala.compiler", "2.10.0.v20120924-042318-ffaa3cb89e", Nil),
+        InstallableUnit("org.scala-ide.scala.library", "2.10.0.v20120924-042318-ffaa3cb89e", Nil),
+        InstallableUnit("org.scala-ide.sdt.core", "2.10.0.v20120924-042318-ffaa3cb89e", Nil)
+        ), units.sortWith((a, b) => a.id < b.id))
   }
 }

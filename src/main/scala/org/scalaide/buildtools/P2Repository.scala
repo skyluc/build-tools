@@ -10,31 +10,70 @@ import java.util.zip.ZipException
 import scala.xml.Elem
 import org.xml.sax.SAXException
 import java.net.URL
+import scala.xml.Node
 
-/** An installable unit in a P2 repository */
-case class InstallableUnit(id: String, version: String)
+case class DependencyUnit(id: String, range: String)
 
-class P2Repository(contentXml: Elem) {
+object DependencyUnit {
 
-  /** Return all installable units in this repository that match the given regex pattern. */
-  def findIU(pattern: String): Seq[InstallableUnit] = {
-    val units = (contentXml \ "units" \\ "unit")
-
-    units.filter(_.attributes.exists(a => a.key == "id" && a.value.text.matches(pattern))) map { unit =>
-      InstallableUnit(unit \ "@id" text, unit \ "@version" text)
-    }
+  def apply(required: Node): Option[DependencyUnit] = {
+    val namespace= (required \ "@namespace" text)
+    if (namespace == "osgi.bundle" || namespace == "org.eclipse.equinox.p2.iu")
+      Some(new DependencyUnit(required \ "@name" text, required \ "@range" text))
+    else
+      None
   }
+
+}
+
+case class InstallableUnit(id: String, version: String, dependencies: Seq[DependencyUnit])
+
+object InstallableUnit {
+  def apply(unit: Node): Option[InstallableUnit] = {
+    if (isBundle(unit) || isFeature(unit))
+      Some(InstallableUnit(unit \ "@id" text, unit \ "@version" text, getDependencies(unit)))
+    else
+      None
+  }
+
+  private def getDependencies(unit: Node): Seq[DependencyUnit] = {
+    unit \ "requires" \ "required" flatMap (DependencyUnit(_))
+  }
+
+  private def isBundle(unit: Node) = unit \ "artifacts" \ "artifact" \ "@classifier" exists (a => a.text == "osgi.bundle")
+
+  private def isFeature(unit: Node) = unit \ "properties" \ "property" exists (e => (e \ "@name" text) == "org.eclipse.equinox.p2.type.group" && (e \ "@value" text) == "true")
+}
+
+case class P2Repository(uis: Map[String, Seq[InstallableUnit]], location: String) {
+
+  def findIU(pattern: String): Seq[InstallableUnit] = {
+    uis.flatMap { entry =>
+      if (entry._1.matches(pattern)) entry._2 else Nil
+    }.toSeq
+  }
+  
+  override def toString = "P2Repository(%s)".format(location)
+
 }
 
 object P2Repository {
-  
-  final val CompressedContentFile= "content.jar"
 
-  def fromString(content: String): P2Repository = {
-    new P2Repository(XML.loadString(content))
+  final val CompressedContentFile = "content.jar"
+
+  def fromXML(contentXml: Elem, location: String): P2Repository = {
+    val unitsXML = (contentXml \ "units" \\ "unit")
+    val units = unitsXML.flatMap(InstallableUnit(_))
+
+    P2Repository(units.groupBy(_.id), location)
   }
 
-  /** Connect to the given repository URL and download content.jar, unzip and
+  def fromString(content: String): P2Repository = {
+    fromXML(XML.loadString(content), "from String")
+  }
+
+  /**
+   * Connect to the given repository URL and download content.jar, unzip and
    *  read the contents. Any error is returned in an instace of `Left`.
    *
    *  This method can handle simple P2 repositories, with zipped metadata. It
@@ -45,7 +84,7 @@ object P2Repository {
    *        to the current process.
    */
   def fromUrl(repoUrl: String): Either[String, P2Repository] = {
-    val url= new URL(repoUrl)
+    val url = new URL(repoUrl)
     url.getProtocol() match {
       case "file" =>
         fromLocalFolder(url.getFile())
@@ -53,13 +92,13 @@ object P2Repository {
         fromHttpUrl(repoUrl)
     }
   }
-  
+
   def fromLocalFolder(repoFolder: String): Either[String, P2Repository] = {
-    val contentFile= new File(repoFolder, CompressedContentFile)
+    val contentFile = new File(repoFolder, CompressedContentFile)
     if (contentFile.exists && contentFile.isFile) {
       for {
         xml <- getContentsFromZipFile(contentFile).right
-      } yield new P2Repository(xml)
+      } yield fromXML(xml, "file://" + repoFolder)
     } else {
       Left("%s doesn't exist, or is not a file".format(contentFile.getAbsolutePath()))
     }
@@ -77,7 +116,7 @@ object P2Repository {
     for {
       d <- stringExceptionHandle().right
       xml <- getContentsFromZipFile(tmpFile).right
-    } yield new P2Repository(xml)
+    } yield fromXML(xml, repoUrl)
     //  } finally Http.shutdown()
   }
 
@@ -91,7 +130,7 @@ object P2Repository {
         Right(XML.load(is))
       }
     } catch {
-      case io: IOException  => Left("Error reading zip file: " + io.getMessage())
+      case io: IOException => Left("Error reading zip file: " + io.getMessage())
       case ze: ZipException => Left("Invalid zip file: " + ze.getMessage())
       case se: SAXException => Left("Error parsing XML file: " + se.getMessage())
     } finally

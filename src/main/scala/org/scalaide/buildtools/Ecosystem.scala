@@ -9,29 +9,38 @@ import scala.util.matching.Regex
 object Ecosystem {
 
   /** suffix used by eclipse to mark feature bundles */
-  final val FeatureSuffix = ".feature.group"
+  val FeatureSuffix = ".feature.group"
   /** suffix used to mark the copy of the files which are modified */
-  final val OriginalSuffix = ".original"
+  val OriginalSuffix = ".original"
 
   /* osgi ids of the relevant bundles */
-  final val ScalaLibraryId = "org.scala-ide.scala.library"
-  final val ScalaCompilerId = "org.scala-ide.scala.compiler"
-  final val ScalaIDEId = "org.scala-ide.sdt.core"
-  final val ScalaIDEFeatureId = "org.scala-ide.sdt.feature"
-  final val ScalaIDEFeatureIdOsgi = ScalaIDEFeatureId + FeatureSuffix
+  val ScalaLibraryId = "org.scala-ide.scala.library"
+  val ScalaCompilerId = "org.scala-ide.scala.compiler"
+  val ScalaIDEId = "org.scala-ide.sdt.core"
+  val ScalaIDEFeatureId = "org.scala-ide.sdt.feature"
+  val ScalaIDESourceFeatureId = "org.scala-ide.sdt.source.feature"
+  val ScalaIDEDevFeatureId = "org.scala-ide.sdt.dev.feature"
+  val ScalaIDEFeatureIdOsgi = ScalaIDEFeatureId + FeatureSuffix
 
   /** default location of the manifest file in a bundle project */
-  final val PluginManifest = "META-INF/MANIFEST.MF"
+  val PluginManifest = "META-INF/MANIFEST.MF"
   /** default location of the feature description fise in a feature project */
-  final val FeatureDescriptor = "feature.xml"
+  val FeatureDescriptor = "feature.xml"
+  /** default location of the ecosystem configuration */
+  val EcosystemConfigFile = "config.properties"
+  /** default location of the feature configuration files */
+  val EcosystemFeatureFolder = "features"
 
   /** regex to find the root option in the command line */
-  final val RootOption = "--root=(.*)".r
+  val RootOption = "--root=(.*)".r
 
+  // regex for the config file
+  val ConfigComment = "#.*".r
+  
   /** regex to find the given bundle id dependency in a manifest file */
-  final def idInManifest(id: String) = ("(.*" + id + ")(,?.*)").r
+  def idInManifest(id: String) = ("(.*" + id + ")(,?.*)").r
   /** regex to find the given bundle id dependency, with a version number defined, in a manifest file */
-  final def idInManifestWithVersion(id: String) = ("(.*)" + id + """;bundle-version="([^"]*)"(,?.*)""").r
+  def idInManifestWithVersion(id: String) = ("(.*)" + id + """;bundle-version="([^"]*)"(,?.*)""").r
 
   /** create the partial function finding the dependency line corresponding to the given id, and set the version */
   def updateVersionInManifest(id: String, version: String): PartialFunction[String, String] =
@@ -48,8 +57,8 @@ object Ecosystem {
 
   /** update the given manifest, using the provided version updater */
   def updateBundleManifest(baseManifest: File, versionUpdater: PartialFunction[String, String]) {
-    val savedManifest= new File(baseManifest.getAbsolutePath() + OriginalSuffix)
-    
+    val savedManifest = new File(baseManifest.getAbsolutePath() + OriginalSuffix)
+
     // make a copy if needed
     if (!savedManifest.exists) {
       FileUtils.copyFile(baseManifest, savedManifest)
@@ -57,7 +66,7 @@ object Ecosystem {
 
     // get the content
     val lines = Source.fromFile(savedManifest).getLines
-    
+
     // update the content
     val newLines = lines.map(versionUpdater)
 
@@ -69,6 +78,15 @@ object Ecosystem {
     }
     writer.flush()
     writer.close()
+  }
+
+  def getContent(file: File): Either[String, Iterator[String]] = {
+    if (file.exists && file.isFile) {
+
+      Right(Source.fromFile(file).getLines)
+    } else {
+      Left("%s doesn't exist or is not a file".format(file))
+    }
   }
 
   private def warning(message: String) {

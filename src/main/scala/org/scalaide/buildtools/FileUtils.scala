@@ -19,4 +19,11 @@ object FileUtils {
             if (outChannel != null) outChannel.close();
         }
     }
+    
+    def deleteFull(file: File) {
+      if (file.isDirectory()) {
+         file.listFiles().foreach(deleteFull(_))
+      } 
+      file.delete()
+    }
 }
