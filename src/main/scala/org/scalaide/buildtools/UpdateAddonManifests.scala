@@ -1,13 +1,12 @@
 package org.scalaide.buildtools
 
 import java.io.File
-
 import scala.xml.Attribute
 import scala.xml.Elem
 import scala.xml.Null
 import scala.xml.XML
-
 import dispatch.Http
+import org.osgi.framework.Version
 
 object UpdateAddonManifests {
   import Ecosystem._
@@ -73,7 +72,7 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
   /**
    * Set strict version dependency to Scala IDE in the plugin and features found under the root.
    */
-  private def updateVersions(scalaIDEVersion: String, scalaLibraryVersion: String, scalaCompilerVersion: String, scalaIDEFeatureVersion: String): Either[String, String] = {
+  private def updateVersions(scalaIDEVersion: Version, scalaLibraryVersion: Version, scalaCompilerVersion: Version, scalaIDEFeatureVersion: Version): Either[String, String] = {
     println("%s, %s, %s, %s".format(scalaIDEVersion, scalaLibraryVersion, scalaCompilerVersion, scalaIDEFeatureVersion))
 
     val root = new File(rootFolder)
@@ -111,9 +110,9 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
   /**
    * Go through the feature definition XML tree, and add version and match attribute for the reference to the scala IDE feature.
    */
-  private def transformXML(e: Elem, version: String): Elem = {
+  private def transformXML(e: Elem, version: Version): Elem = {
     if (e.attributes.get("feature").exists(_.text == ScalaIDEFeatureId)) {
-      e.copy(attributes = e.attributes.append(Attribute(null, "version", version, Attribute(null, "match", "perfect", Null))))
+      e.copy(attributes = e.attributes.append(Attribute(null, "version", version.toString, Attribute(null, "match", "perfect", Null))))
     } else {
       e.copy(child = e.child.map(_ match {
         case e: Elem => transformXML(e, version)
@@ -125,7 +124,7 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
   /**
    * Set strict version dependency to Scala IDE feature in the given feature file.
    */
-  private def updateVersionInFeature(feature: File, scalaIDEFeatureVersion: String): Either[String, String] = {
+  private def updateVersionInFeature(feature: File, scalaIDEFeatureVersion: Version): Either[String, String] = {
     println(feature.getAbsoluteFile())
     
     val savedFeature= new File(feature.getAbsolutePath() + OriginalSuffix)
@@ -142,15 +141,15 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
   }
 
   /**
-   * Return the unique version of a plugin available in the repository.
-   * Return an error if the plugin is not available, or more than one version is available.
+   * Return the latest version of a plugin available in the repository.
+   * Return an error if the plugin is not available.
    */
-  private def getOneVersion(p2Repo: P2Repository, pluginId: String): Either[String, String] = {
-    p2Repo.findIU(pluginId) match {
-      case Seq(iu) =>
+  private def getOneVersion(p2Repo: P2Repository, pluginId: String): Either[String, Version] = {
+    p2Repo.findIU(pluginId).headOption match {
+      case Some(iu) =>
         Right(iu.version)
-      case s =>
-        Left("More than one version found for %s. You may not be using the right repository.".format(pluginId))
+      case None =>
+        Left("No version found for %s. You may not be using the right repository.".format(pluginId))
     }
   }
 

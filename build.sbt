@@ -13,6 +13,7 @@ publishTo := Some("Typesafe IDE" at "https://typesafe.artifactoryonline.com/type
 credentials += Credentials(Path.userHome / ".credentials")
 
 libraryDependencies ++= Seq(
+  "org.osgi" % "org.osgi.core" % "4.3.0", 
   "net.databinder.dispatch" %% "core" % "0.9.1",
   "junit" % "junit" % "4.8.1" % "test",
   "com.novocode" % "junit-interface" % "0.10-M1" % "test")

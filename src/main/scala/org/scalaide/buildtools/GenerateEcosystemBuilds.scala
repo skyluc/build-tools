@@ -3,6 +3,7 @@ package org.scalaide.buildtools
 import java.io.File
 import scala.annotation.tailrec
 import scala.collection.mutable.HashMap
+import org.osgi.framework.Version
 
 /**
  * !!! This object not thread safe !!! It was used in a single threaded system when implemented.
@@ -95,7 +96,7 @@ class GenerateEcosystemBuilds(rootFolder: String) {
   }
 
   private def findFeatures(feature: RequestedFeature, repository: P2Repository): Seq[FeatureDefinition] = {
-    repository.findIU(feature.id + FeatureSuffix).map(FeatureDefinition(feature, _, repository))
+    repository.findIU(feature.id + FeatureSuffix).toSeq.map(FeatureDefinition(feature, _, repository))
   }
 
   private def mergeFeatureList(base: List[FeatureDefinition], toMerge: List[FeatureDefinition]): List[FeatureDefinition] = {
@@ -127,7 +128,7 @@ class GenerateEcosystemBuilds(rootFolder: String) {
 }
 
 case class ScalaIDEDefinition(
-  sdtFeatureVersion: String,
+  sdtFeatureVersion: Version,
   sdtCoreVersion: Option[DependencyUnit],
   scalaLibraryVersion: Option[DependencyUnit],
   scalaCompilerVersion: Option[DependencyUnit], repository: P2Repository)
@@ -153,7 +154,7 @@ object ScalaIDEDefinition {
   }
 
   def allDependencies(du: DependencyUnit, repository: P2Repository): Seq[DependencyUnit] = {
-    repository.findIU(du.id).filter(iu => matches(iu.version, du.range)) match {
+    repository.findIU(du.id).toList.filter(iu => matches(iu.version, du.range)) match {
       case Nil =>
         // not part of this repository, fine
         Nil
@@ -167,12 +168,12 @@ object ScalaIDEDefinition {
     }
   }
 
-  def matches(version: String, range: String): Boolean = {
+  def matches(version: Version, range: String): Boolean = {
     range match {
       case RangeRegex(low, high) if (low == high) =>
         // we care only about strict versions so far
         // TODO: may need to improve that
-        version == low
+        version.equals(new Version(low))
       case _ =>
         false
     }
@@ -181,7 +182,7 @@ object ScalaIDEDefinition {
 
 case class FeatureDefinition(
   details: RequestedFeature,
-  version: String,
+  version: Version,
   sdtFeatureRange: DependencyUnit,
   sdtCoreRange: DependencyUnit,
   scalaLibraryRange: DependencyUnit,
