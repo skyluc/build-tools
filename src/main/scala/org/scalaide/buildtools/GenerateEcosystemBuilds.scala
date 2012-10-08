@@ -77,13 +77,12 @@ class GenerateEcosystemBuilds(rootFolder: String) {
   }
 
   private def findScalaIDEsAndResolvedAvailableFeatures(repository: P2Repository, requestedFeatures: List[RequestedFeature], availableFeatures: List[FeatureDefinition]): Map[ScalaIDEDefinition, List[FeatureDefinition]] = {
-    val allAvailableFeatures= mergeFeatureList(availableFeatures, findExistingFeatures(requestedFeatures, repository))
+    val allAvailableFeatures = mergeFeatureList(availableFeatures, findExistingFeatures(requestedFeatures, repository))
     repository.findIU(ScalaIDEFeatureIdOsgi).map(ScalaIDEDefinition(_, repository))
-    
+
     repository.findIU(ScalaIDEFeatureIdOsgi).foldLeft(Map[ScalaIDEDefinition, List[FeatureDefinition]]())((m, ui) =>
-        // TODO: might be a nice place to check versions
-        m + (ScalaIDEDefinition(ui, repository) -> allAvailableFeatures.filter(f => ScalaIDEDefinition.matches(ui.version, f.sdtFeatureRange.range)))
-      )
+      // TODO: might be a nice place to check versions
+      m + (ScalaIDEDefinition(ui, repository) -> allAvailableFeatures.filter(f => ScalaIDEDefinition.matches(ui.version, f.sdtFeatureRange.range))))
   }
 
   private def findFeatures(requestedFeatures: List[RequestedFeature]): Either[String, List[FeatureDefinition]] = {
@@ -91,7 +90,14 @@ class GenerateEcosystemBuilds(rootFolder: String) {
   }
 
   private def findFeatures(requestedFeature: RequestedFeature): Seq[FeatureDefinition] = {
-    requestedFeature.repositories.flatMap(location => findFeatures(requestedFeature, Repositories(location).right.get))
+    requestedFeature.repositories.flatMap { location =>
+      Repositories(location) match {
+        case Right(p2repo) =>
+          findFeatures(requestedFeature, p2repo)
+        case Left(_) =>
+          Nil
+      }
+    }
   }
 
   private def findFeatures(feature: RequestedFeature, repository: P2Repository): Seq[FeatureDefinition] = {
@@ -99,7 +105,7 @@ class GenerateEcosystemBuilds(rootFolder: String) {
   }
 
   private def mergeFeatureList(base: List[FeatureDefinition], toMerge: List[FeatureDefinition]): List[FeatureDefinition] = {
-    
+
     def loop(toProcess: List[FeatureDefinition]): List[FeatureDefinition] = {
       toProcess match {
         case Nil =>
@@ -112,7 +118,7 @@ class GenerateEcosystemBuilds(rootFolder: String) {
           }
       }
     }
-    val res= loop(toMerge)
+    val res = loop(toMerge)
     res
   }
 

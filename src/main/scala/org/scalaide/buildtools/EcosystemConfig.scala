@@ -11,7 +11,7 @@ object EcosystemConfig {
 
   // regex for the config file
   private val ConfigCategory = "category.([^=]*)=(.*)".r
-  private val ConfigRepository = "baseRepository.([^=]*)=(.*)".r
+  private val ConfigRepository = "ecosystemBaseRepository.([^=]*)=(.*)".r
 
   def apply(configFile: File): Either[String, EcosystemConfig] = {
     for {
@@ -46,6 +46,7 @@ object EcosystemConfig {
 
 case class EcosystemConfig(categories: Map[String, String], repositories: List[EcosystemRepository])
 
-case class EcosystemRepository(id: String, location: String) {
+case class EcosystemRepository(id: String, location: String, baseLocation: String) {
   def getRepository() = Repositories(location)
+  def getBaseRepository() = Repositories(baseLocation)
 }
