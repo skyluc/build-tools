@@ -14,5 +14,6 @@ credentials += Credentials(Path.userHome / ".credentials")
 
 libraryDependencies ++= Seq(
   "net.databinder.dispatch" %% "core" % "0.9.1",
+  "com.typesafe" % "config" % "0.5.2",
   "junit" % "junit" % "4.8.1" % "test",
   "com.novocode" % "junit-interface" % "0.10-M1" % "test")
