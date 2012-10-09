@@ -2,9 +2,9 @@ package org.scalaide.buildtools
 
 import java.io.File
 import java.io.FileWriter
-
 import scala.io.Source
 import scala.util.matching.Regex
+import org.osgi.framework.Version
 
 object Ecosystem {
 
@@ -43,11 +43,11 @@ object Ecosystem {
   def idInManifestWithVersion(id: String) = ("(.*)" + id + """;bundle-version="([^"]*)"(,?.*)""").r
 
   /** create the partial function finding the dependency line corresponding to the given id, and set the version */
-  def updateVersionInManifest(id: String, version: String): PartialFunction[String, String] =
+  def updateVersionInManifest(id: String, version: Version): PartialFunction[String, String] =
     updateVersionInManifest(idInManifestWithVersion(id), idInManifest(id), version)
 
   /** method need to create the partial function */
-  private def updateVersionInManifest(idWithVersion: Regex, id: Regex, version: String): PartialFunction[String, String] = {
+  private def updateVersionInManifest(idWithVersion: Regex, id: Regex, version: Version): PartialFunction[String, String] = {
     case line @ idWithVersion(_, currentVersion, _) =>
       warning("%s has already a version number defined: %s".format(ScalaLibraryId, currentVersion))
       line

@@ -3,6 +3,7 @@ package org.scalaide.buildtools
 import java.io.File
 import scala.xml.Elem
 import scala.xml.XML
+import org.osgi.framework.Version
 
 object MavenProject {
   import Ecosystem._
@@ -115,8 +116,8 @@ object MavenProject {
   private def featureXml(feature: FeatureDefinition): List[Elem] =
     List(featureXml(feature.details.id, feature.version, feature.details.category)) ++ feature.details.source.map(featureXml(_, feature.version, "source"))
 
-  private def featureXml(id: String, version: String, category: String): Elem = {
-    <feature url={ "features/" + id + "_0.0.0.jar" } id={ id } version={ version }>
+  private def featureXml(id: String, version: Version, category: String): Elem = {
+    <feature url={ "features/" + id + "_0.0.0.jar" } id={ id } version={ version.toString }>
       <category name={ category }/>
     </feature>
   }

@@ -3,6 +3,7 @@ package org.scalaide.buildtools
 import java.io.File
 import scala.io.Source
 import java.io.FileWriter
+import org.osgi.framework.Version
 
 object UpdateScalaIDEManifests {
 
@@ -52,7 +53,7 @@ class UpdateScalaIDEManifests(root: String) {
   /**
    * Returns the version contained in the generated manifest file
    */
-  private def getPackagedBundleVersion(projectPath: String): String = {
+  private def getPackagedBundleVersion(projectPath: String): Version = {
     val projectFolder = new File(rootFolder, projectPath)
     val manifestFile = new File(projectFolder, PackagedManifestPath)
 
@@ -64,13 +65,13 @@ class UpdateScalaIDEManifests(root: String) {
     }
 
     // TODO: check if version found
-    version.get
+    new Version(version.get)
   }
 
   /**
    * Set strict version dependency to Scala library and compiler in the given project.
    */
-  private def updateManifest(projectPath: String, scalaLibraryVersion: String, scalaCompilerVersion: String) {
+  private def updateManifest(projectPath: String, scalaLibraryVersion: Version, scalaCompilerVersion: Version) {
     val projectFolder = new File(rootFolder, projectPath)
     val baseManifest = new File(projectFolder, PluginManifest)
 

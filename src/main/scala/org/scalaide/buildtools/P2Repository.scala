@@ -11,6 +11,8 @@ import scala.xml.Elem
 import org.xml.sax.SAXException
 import java.net.{URL => jURL}
 import scala.xml.Node
+import org.osgi.framework.Version
+import scala.collection.immutable.TreeSet
 
 case class DependencyUnit(id: String, range: String)
 
@@ -26,18 +28,26 @@ object DependencyUnit {
 
 }
 
-case class InstallableUnit(id: String, version: String, dependencies: List[DependencyUnit])
+case class InstallableUnit(id: String, version: Version, dependencies: Seq[DependencyUnit])
 
 object InstallableUnit {
   def apply(unit: Node): Option[InstallableUnit] = {
     if (isBundle(unit) || isFeature(unit))
-      Some(InstallableUnit(unit \ "@id" text, unit \ "@version" text, getDependencies(unit)))
+      Some(InstallableUnit(unit \ "@id" text, new Version(unit \ "@version" text), getDependencies(unit)))
     else
       None
   }
 
-  private def getDependencies(unit: Node): List[DependencyUnit] = {
-    (unit \ "requires" \ "required" flatMap {d: Node => DependencyUnit(d)}).toList
+  implicit object DescendingOrdering extends Ordering[InstallableUnit] {
+    override def compare(x: InstallableUnit, y: InstallableUnit): Int = {
+      val diffId = x.id.compareTo(y.id)
+      if(diffId == 0) -1 * x.version.compareTo(y.version) // same bundle name, compare versions
+      else diffId
+    }
+  }
+  
+  private def getDependencies(unit: Node): Seq[DependencyUnit] = {
+    unit \ "requires" \ "required" flatMap (DependencyUnit(_))
   }
 
   private def isBundle(unit: Node) = unit \ "artifacts" \ "artifact" \ "@classifier" exists (a => a.text == "osgi.bundle")
@@ -45,13 +55,10 @@ object InstallableUnit {
   private def isFeature(unit: Node) = unit \ "properties" \ "property" exists (e => (e \ "@name" text) == "org.eclipse.equinox.p2.type.group" && (e \ "@value" text) == "true")
 }
 
-case class P2Repository(uis: Map[String, Seq[InstallableUnit]], location: String) {
+case class P2Repository private(uis: Map[String, TreeSet[InstallableUnit]], location: String) {
 
-  def findIU(pattern: String): List[InstallableUnit] = {
-    uis.flatMap { entry =>
-      if (entry._1.matches(pattern)) entry._2 else Nil
-    }.toList
-  }
+  def findIU(unitId: String): TreeSet[InstallableUnit] = 
+    uis get (unitId) getOrElse (TreeSet.empty[InstallableUnit])
   
   override def toString = "P2Repository(%s)".format(location)
 
@@ -64,8 +71,9 @@ object P2Repository {
   def fromXML(contentXml: Elem, location: String): P2Repository = {
     val unitsXML = (contentXml \ "units" \\ "unit")
     val units = unitsXML.flatMap(InstallableUnit(_))
-
-    P2Repository(units.groupBy(_.id), location)
+    val grouped = units.groupBy(_.id)
+    val sorted = for((key, values) <- grouped) yield (key, TreeSet(values : _*))
+    P2Repository(sorted, location)
   }
 
   def fromString(content: String): P2Repository = {
