@@ -7,7 +7,7 @@ import scala.collection.immutable.TreeSet
 
 class P2RepositoryTest {
   
-  private def InstallableUnit(id: String, version: String, dependencies: Seq[DependencyUnit] = Nil): InstallableUnit = 
+  private def InstallableUnit(id: String, version: String, dependencies: List[DependencyUnit] = Nil): InstallableUnit = 
     new InstallableUnit(id, new Version(version), dependencies)
 
   @Test def testSimpleRepo() {

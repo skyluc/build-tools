@@ -5,6 +5,7 @@ import scala.annotation.tailrec
 import scala.collection.mutable.HashMap
 import java.net.URL
 import org.osgi.framework.Version
+import scala.collection.immutable.TreeSet
 
 /**
  * !!! This object not thread safe !!! It was used in a single threaded system when implemented.
@@ -45,21 +46,20 @@ class GenerateEcosystemBuilds(rootFolder: String) {
   import Ecosystem._
 
   def apply(): Either[String, AnyRef] = {
-    
-    val ecosystems= EcosystemsDescriptor.load(new File(rootFolder, EcosystemConfigFile)).ecosystems
-    val requestedFeatures= PluginDescriptor.loadAll(new File(rootFolder, "features")).flatMap(_ match {
+
+    val ecosystems = EcosystemsDescriptor.load(new File(rootFolder, EcosystemConfigFile)).ecosystems
+    val requestedFeatures = PluginDescriptor.loadAll(new File(rootFolder, "features")).flatMap(_ match {
       case Right(conf) =>
         Some(conf)
       case Left(_) =>
         None
     })
-    
+
     for {
       availableFeatures <- findFeatures(requestedFeatures.toList).right
       ecosystemToScalaIDEToAvailableFeatures <- getAvailableScalaIDEs(ecosystems, requestedFeatures.toList, availableFeatures).right
     } yield MavenProject2.generateEcosystemsProjects(ecosystemToScalaIDEToAvailableFeatures, new File(rootFolder, "target/builds"))
-    
-    
+
   }
 
   private def getAvailableScalaIDEs(ecosystems: List[EcosystemDescriptor], requestedFeatures: List[PluginDescriptor], availableFeatures: List[FeatureDefinition]): Either[String, Map[EcosystemDescriptor, Map[ScalaIDEDefinition, List[FeatureDefinition]]]] = {
@@ -92,10 +92,14 @@ class GenerateEcosystemBuilds(rootFolder: String) {
 
     baseRepository.findIU(ScalaIDEFeatureIdOsgi).foldLeft(Map[ScalaIDEDefinition, List[FeatureDefinition]]())((m, ui) =>
       // TODO: might be a nice place to check versions
-      m + (ScalaIDEDefinition(ui, baseRepository) -> allAvailableFeatures.filter(f => ScalaIDEDefinition.matches(ui.version, f.sdtFeatureRange.range))))
+      m + (ScalaIDEDefinition(ui, baseRepository) -> filterFeaturesFor(ui, allAvailableFeatures)))
   }
 
-  private def findFeatures(requestedFeatures:  List[PluginDescriptor]): Either[String, List[FeatureDefinition]] = {
+  private def filterFeaturesFor(scalaIDE: InstallableUnit, availableFeatures: List[FeatureDefinition]): List[FeatureDefinition] = {
+    availableFeatures.filter(f => ScalaIDEDefinition.matches(scalaIDE.version, f.sdtFeatureRange.range)).groupBy(_.details.featureId).map(t => TreeSet(t._2: _*)(FeatureDefinition.DescendingOrdering).head).toList
+  }
+
+  private def findFeatures(requestedFeatures: List[PluginDescriptor]): Either[String, List[FeatureDefinition]] = {
     Right(requestedFeatures.flatMap(findFeatures(_)))
   }
 
@@ -111,7 +115,7 @@ class GenerateEcosystemBuilds(rootFolder: String) {
   }
 
   private def findFeatures(feature: PluginDescriptor, repository: P2Repository): List[FeatureDefinition] = {
-    repository.findIU(feature.featureId + FeatureSuffix).map(FeatureDefinition(feature, _, repository))
+    repository.findIU(feature.featureId + FeatureSuffix).toList.map(FeatureDefinition(feature, _, repository))
   }
 
   private def mergeFeatureList(base: List[FeatureDefinition], toMerge: List[FeatureDefinition]): List[FeatureDefinition] = {
@@ -221,4 +225,13 @@ object FeatureDefinition {
 
     new FeatureDefinition(details, iu.version, sdtFeature.get, sdtCore.get, scalaLibrary.get, scalaCompiler.get, repository)
   }
+
+  implicit object DescendingOrdering extends Ordering[FeatureDefinition] {
+    override def compare(x: FeatureDefinition, y: FeatureDefinition): Int = {
+      val diffId = x.details.featureId.compareTo(y.details.featureId)
+      if (diffId == 0) -1 * x.version.compareTo(y.version) // same bundle name, compare versions
+      else diffId
+    }
+  }
+
 }

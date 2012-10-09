@@ -6,6 +6,8 @@ import scala.xml.Elem
 import scala.xml.XML
 
 object MavenProject2 {
+  
+  val artifactIdSuffix= Iterator.from(1)
 
   private def saveXml(file: File, xml: Elem) {
     XML.save(file.getAbsolutePath(), xml, "UTF-8", true)
@@ -31,25 +33,25 @@ object MavenProject2 {
 
     val artifactId = "ecosystem.%s".format(ecosystem.id)
 
-    val featureFolders: Seq[File] = scalaIDEToAvailableFeatures.flatMap(s => generateScalaIDEProjects(s._1, s._2, artifactId, Iterator.from(1), ecosystemFolder)).toSeq
+    val featureFolders: Seq[File] = scalaIDEToAvailableFeatures.flatMap(s => generateScalaIDEProjects(s._1, s._2, artifactId, ecosystemFolder)).toSeq
 
     saveXml(new File(ecosystemFolder, "pom.xml"), createEcosystemPomXml(artifactId, ecosystem.baseSite, ecosystemFolder, featureFolders))
 
     ecosystemFolder
   }
 
-  def generateScalaIDEProjects(scalaIDE: ScalaIDEDefinition, features: Seq[FeatureDefinition], parentId: String, idCounter: Iterator[Int], baseFolder: File): Seq[File] = {
-    val scalaIDEFolder = new File(baseFolder, scalaIDE.sdtFeatureVersion)
+  def generateScalaIDEProjects(scalaIDE: ScalaIDEDefinition, features: Seq[FeatureDefinition], parentId: String, baseFolder: File): Seq[File] = {
+    val scalaIDEFolder = new File(baseFolder, scalaIDE.sdtFeatureVersion.toString())
     scalaIDEFolder.mkdir()
 
-    features.map(f => generateFeatureProject(f, parentId, scalaIDE.repository, idCounter, scalaIDEFolder))
+    features.map(f => generateFeatureProject(f, parentId, scalaIDE.repository, scalaIDEFolder))
   }
 
-  def generateFeatureProject(feature: FeatureDefinition, parentId: String, scalaIDERepository: P2Repository, idCounter: Iterator[Int], baseFolder: File): File = {
+  def generateFeatureProject(feature: FeatureDefinition, parentId: String, scalaIDERepository: P2Repository, baseFolder: File): File = {
     val featureFolder = new File(baseFolder, feature.details.featureId)
     featureFolder.mkdir()
 
-    saveXml(new File(featureFolder, "pom.xml"), createFeaturePomXml(feature.repository, scalaIDERepository, parentId, idCounter.next))
+    saveXml(new File(featureFolder, "pom.xml"), createFeaturePomXml(feature.repository, scalaIDERepository, parentId))
     saveXml(new File(featureFolder, "site.xml"), createSiteXml(feature))
 
     featureFolder
@@ -152,7 +154,7 @@ object MavenProject2 {
     </project>
   }
 
-  def createFeaturePomXml(featureRepository: P2Repository, scalaIDERepository: P2Repository, parentId: String, id: Int) = {
+  def createFeaturePomXml(featureRepository: P2Repository, scalaIDERepository: P2Repository, parentId: String) = {
     // TODO: support for non-indigo build
     <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <modelVersion>4.0.0</modelVersion>
@@ -165,7 +167,7 @@ object MavenProject2 {
         <version>0.1.0-SNAPSHOT</version>
         <relativePath>../..</relativePath>
       </parent>
-      <artifactId>org.scala-ide.ecosystem.generated{ id }</artifactId>
+      <artifactId>org.scala-ide.ecosystem.generated{ artifactIdSuffix.next }</artifactId>
       <version>0.1.0-SNAPSHOT</version>
       <description>Build project for the scalatest support in Scala IDE</description>
       <packaging>eclipse-update-site</packaging>
@@ -228,7 +230,7 @@ object MavenProject2 {
   private def featureXml(feature: FeatureDefinition): List[Elem] =
     // TODO: fix category
     // TODO: fix sourceFeatureId, should be option
-    List(featureXml(feature.details.featureId, feature.version, "incubation")) :+  featureXml(feature.details.sourceFeatureId, feature.version, "source")
+    List(featureXml(feature.details.featureId, feature.version.toString, "incubation")) :+  featureXml(feature.details.sourceFeatureId, feature.version.toString, "source")
 
   private def featureXml(id: String, version: String, category: String): Elem = {
     <feature url={ "features/" + id + "_0.0.0.jar" } id={ id } version={ version }>

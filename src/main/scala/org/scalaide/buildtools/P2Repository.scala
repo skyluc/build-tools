@@ -28,7 +28,7 @@ object DependencyUnit {
 
 }
 
-case class InstallableUnit(id: String, version: Version, dependencies: Seq[DependencyUnit])
+case class InstallableUnit(id: String, version: Version, dependencies: List[DependencyUnit])
 
 object InstallableUnit {
   def apply(unit: Node): Option[InstallableUnit] = {
@@ -46,8 +46,8 @@ object InstallableUnit {
     }
   }
   
-  private def getDependencies(unit: Node): Seq[DependencyUnit] = {
-    unit \ "requires" \ "required" flatMap (DependencyUnit(_))
+  private def getDependencies(unit: Node): List[DependencyUnit] = {
+    (unit \ "requires" \ "required" flatMap (DependencyUnit(_))).toList
   }
 
   private def isBundle(unit: Node) = unit \ "artifacts" \ "artifact" \ "@classifier" exists (a => a.text == "osgi.bundle")
