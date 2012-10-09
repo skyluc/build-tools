@@ -6,7 +6,7 @@ import scala.xml.XML
 
 object MavenProject {
   import Ecosystem._
-
+/*
   def generateEcosystemsProjects(ecosystemToScalaIDEToAvailableFeatures: Map[EcosystemRepository, Map[ScalaIDEDefinition, List[FeatureDefinition]]], location: File): String = {
 
     val baseFolder = new File(location, "target/build")
@@ -185,5 +185,5 @@ object MavenProject {
       <url>{ repository.location }</url>
     </repository>
   }
-
+*/
 }

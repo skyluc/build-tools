@@ -9,7 +9,7 @@ import java.io.IOException
 import java.util.zip.ZipException
 import scala.xml.Elem
 import org.xml.sax.SAXException
-import java.net.URL
+import java.net.{URL => jURL}
 import scala.xml.Node
 
 case class DependencyUnit(id: String, range: String)
@@ -26,7 +26,7 @@ object DependencyUnit {
 
 }
 
-case class InstallableUnit(id: String, version: String, dependencies: Seq[DependencyUnit])
+case class InstallableUnit(id: String, version: String, dependencies: List[DependencyUnit])
 
 object InstallableUnit {
   def apply(unit: Node): Option[InstallableUnit] = {
@@ -36,8 +36,8 @@ object InstallableUnit {
       None
   }
 
-  private def getDependencies(unit: Node): Seq[DependencyUnit] = {
-    unit \ "requires" \ "required" flatMap (DependencyUnit(_))
+  private def getDependencies(unit: Node): List[DependencyUnit] = {
+    (unit \ "requires" \ "required" flatMap {d: Node => DependencyUnit(d)}).toList
   }
 
   private def isBundle(unit: Node) = unit \ "artifacts" \ "artifact" \ "@classifier" exists (a => a.text == "osgi.bundle")
@@ -47,10 +47,10 @@ object InstallableUnit {
 
 case class P2Repository(uis: Map[String, Seq[InstallableUnit]], location: String) {
 
-  def findIU(pattern: String): Seq[InstallableUnit] = {
+  def findIU(pattern: String): List[InstallableUnit] = {
     uis.flatMap { entry =>
       if (entry._1.matches(pattern)) entry._2 else Nil
-    }.toSeq
+    }.toList
   }
   
   override def toString = "P2Repository(%s)".format(location)
@@ -84,12 +84,15 @@ object P2Repository {
    *        to the current process.
    */
   def fromUrl(repoUrl: String): Either[String, P2Repository] = {
-    val url = new URL(repoUrl)
-    url.getProtocol() match {
+    fromUrl(new jURL(repoUrl))
+  }
+  
+  def fromUrl(repoUrl: jURL): Either[String, P2Repository] = {
+    repoUrl.getProtocol() match {
       case "file" =>
-        fromLocalFolder(url.getFile())
+        fromLocalFolder(repoUrl.getFile())
       case _ =>
-        fromHttpUrl(repoUrl)
+        fromHttpUrl(repoUrl.toExternalForm())
     }
   }
 

@@ -3,15 +3,16 @@ package org.scalaide.buildtools
 import java.io.File
 import scala.annotation.tailrec
 import scala.collection.mutable.HashMap
+import java.net.URL
 
 /**
  * !!! This object not thread safe !!! It was used in a single threaded system when implemented.
  */
 object Repositories {
 
-  val repos = HashMap[String, Either[String, P2Repository]]()
+  val repos = HashMap[URL, Either[String, P2Repository]]()
 
-  def apply(location: String): Either[String, P2Repository] = {
+  def apply(location: URL): Either[String, P2Repository] = {
     repos.get(location) match {
       case Some(repo) =>
         repo
@@ -43,18 +44,26 @@ class GenerateEcosystemBuilds(rootFolder: String) {
   import Ecosystem._
 
   def apply(): Either[String, AnyRef] = {
+    
+    val ecosystems= EcosystemsDescriptor.load(new File(rootFolder, EcosystemConfigFile)).ecosystems
+    val requestedFeatures= PluginDescriptor.loadAll(new File(rootFolder, "features")).flatMap(_ match {
+      case Right(conf) =>
+        Some(conf)
+      case Left(_) =>
+        None
+    })
+    
     for {
-      config <- EcosystemConfig(new File(rootFolder, EcosystemConfigFile)).right
-      requestedFeatures <- RequestedFeature.parseConfigFiles(new File(rootFolder, EcosystemFeatureFolder)).right
-      availableFeatures <- findFeatures(requestedFeatures).right
-      ecosystemToScalaIDEToAvailableFeatures <- getAvailableScalaIDEs(config, requestedFeatures, availableFeatures).right
-    } yield MavenProject.generateEcosystemsProjects(ecosystemToScalaIDEToAvailableFeatures, new File(rootFolder))
-
+      availableFeatures <- findFeatures(requestedFeatures.toList).right
+      ecosystemToScalaIDEToAvailableFeatures <- getAvailableScalaIDEs(ecosystems, requestedFeatures.toList, availableFeatures).right
+    } yield MavenProject2.generateEcosystemsProjects(ecosystemToScalaIDEToAvailableFeatures, new File(rootFolder, "target/builds"))
+    
+    
   }
 
-  private def getAvailableScalaIDEs(config: EcosystemConfig, requestedFeatures: List[RequestedFeature], availableFeatures: List[FeatureDefinition]): Either[String, Map[EcosystemRepository, Map[ScalaIDEDefinition, List[FeatureDefinition]]]] = {
+  private def getAvailableScalaIDEs(ecosystems: List[EcosystemDescriptor], requestedFeatures: List[PluginDescriptor], availableFeatures: List[FeatureDefinition]): Either[String, Map[EcosystemDescriptor, Map[ScalaIDEDefinition, List[FeatureDefinition]]]] = {
     @tailrec
-    def loop(repositories: List[EcosystemRepository], definitions: Map[EcosystemRepository, Map[ScalaIDEDefinition, List[FeatureDefinition]]]): Either[String, Map[EcosystemRepository, Map[ScalaIDEDefinition, List[FeatureDefinition]]]] = {
+    def loop(repositories: List[EcosystemDescriptor], definitions: Map[EcosystemDescriptor, Map[ScalaIDEDefinition, List[FeatureDefinition]]]): Either[String, Map[EcosystemDescriptor, Map[ScalaIDEDefinition, List[FeatureDefinition]]]] = {
       repositories match {
         case Nil =>
           Right(definitions)
@@ -67,30 +76,30 @@ class GenerateEcosystemBuilds(rootFolder: String) {
           }
       }
     }
-    loop(config.repositories, Map())
+    loop(ecosystems, Map())
   }
 
-  private def findScalaIDEsAndResolvedAvailableFeatures(repositoryDefinition: EcosystemRepository, requestedFeatures: List[RequestedFeature], availableFeatures: List[FeatureDefinition]): Either[String, Map[ScalaIDEDefinition, List[FeatureDefinition]]] = {
+  private def findScalaIDEsAndResolvedAvailableFeatures(ecosystem: EcosystemDescriptor, requestedFeatures: List[PluginDescriptor], availableFeatures: List[FeatureDefinition]): Either[String, Map[ScalaIDEDefinition, List[FeatureDefinition]]] = {
     for {
-      repository <- repositoryDefinition.getRepository.right
-    } yield findScalaIDEsAndResolvedAvailableFeatures(repository, requestedFeatures, availableFeatures)
+      repository <- Repositories(ecosystem.site).right
+      baseRepository <- Repositories(ecosystem.baseSite).right
+    } yield findScalaIDEsAndResolvedAvailableFeatures(repository, baseRepository, requestedFeatures, availableFeatures)
   }
 
-  private def findScalaIDEsAndResolvedAvailableFeatures(repository: P2Repository, requestedFeatures: List[RequestedFeature], availableFeatures: List[FeatureDefinition]): Map[ScalaIDEDefinition, List[FeatureDefinition]] = {
+  private def findScalaIDEsAndResolvedAvailableFeatures(repository: P2Repository, baseRepository: P2Repository, requestedFeatures: List[PluginDescriptor], availableFeatures: List[FeatureDefinition]): Map[ScalaIDEDefinition, List[FeatureDefinition]] = {
     val allAvailableFeatures = mergeFeatureList(availableFeatures, findExistingFeatures(requestedFeatures, repository))
-    repository.findIU(ScalaIDEFeatureIdOsgi).map(ScalaIDEDefinition(_, repository))
 
-    repository.findIU(ScalaIDEFeatureIdOsgi).foldLeft(Map[ScalaIDEDefinition, List[FeatureDefinition]]())((m, ui) =>
+    baseRepository.findIU(ScalaIDEFeatureIdOsgi).foldLeft(Map[ScalaIDEDefinition, List[FeatureDefinition]]())((m, ui) =>
       // TODO: might be a nice place to check versions
-      m + (ScalaIDEDefinition(ui, repository) -> allAvailableFeatures.filter(f => ScalaIDEDefinition.matches(ui.version, f.sdtFeatureRange.range))))
+      m + (ScalaIDEDefinition(ui, baseRepository) -> allAvailableFeatures.filter(f => ScalaIDEDefinition.matches(ui.version, f.sdtFeatureRange.range))))
   }
 
-  private def findFeatures(requestedFeatures: List[RequestedFeature]): Either[String, List[FeatureDefinition]] = {
+  private def findFeatures(requestedFeatures:  List[PluginDescriptor]): Either[String, List[FeatureDefinition]] = {
     Right(requestedFeatures.flatMap(findFeatures(_)))
   }
 
-  private def findFeatures(requestedFeature: RequestedFeature): Seq[FeatureDefinition] = {
-    requestedFeature.repositories.flatMap { location =>
+  private def findFeatures(requestedFeature: PluginDescriptor): List[FeatureDefinition] = {
+    requestedFeature.updateSites.flatMap { location =>
       Repositories(location) match {
         case Right(p2repo) =>
           findFeatures(requestedFeature, p2repo)
@@ -100,8 +109,8 @@ class GenerateEcosystemBuilds(rootFolder: String) {
     }
   }
 
-  private def findFeatures(feature: RequestedFeature, repository: P2Repository): Seq[FeatureDefinition] = {
-    repository.findIU(feature.id + FeatureSuffix).map(FeatureDefinition(feature, _, repository))
+  private def findFeatures(feature: PluginDescriptor, repository: P2Repository): List[FeatureDefinition] = {
+    repository.findIU(feature.featureId + FeatureSuffix).map(FeatureDefinition(feature, _, repository))
   }
 
   private def mergeFeatureList(base: List[FeatureDefinition], toMerge: List[FeatureDefinition]): List[FeatureDefinition] = {
@@ -122,7 +131,7 @@ class GenerateEcosystemBuilds(rootFolder: String) {
     res
   }
 
-  private def findExistingFeatures(requestedFeatures: List[RequestedFeature], repository: P2Repository): List[FeatureDefinition] = {
+  private def findExistingFeatures(requestedFeatures: List[PluginDescriptor], repository: P2Repository): List[FeatureDefinition] = {
     requestedFeatures.flatMap(findFeatures(_, repository))
   }
 
@@ -154,16 +163,16 @@ object ScalaIDEDefinition {
     new ScalaIDEDefinition(feature.version, sdtCore, scalaLibrary, scalaCompiler, repository)
   }
 
-  def allDependencies(iu: InstallableUnit, repository: P2Repository): Seq[DependencyUnit] = {
+  def allDependencies(iu: InstallableUnit, repository: P2Repository): List[DependencyUnit] = {
     iu.dependencies ++ iu.dependencies.flatMap(allDependencies(_, repository))
   }
 
-  def allDependencies(du: DependencyUnit, repository: P2Repository): Seq[DependencyUnit] = {
+  def allDependencies(du: DependencyUnit, repository: P2Repository): List[DependencyUnit] = {
     repository.findIU(du.id).filter(iu => matches(iu.version, du.range)) match {
       case Nil =>
         // not part of this repository, fine
         Nil
-      case Seq(iu) =>
+      case List(iu) =>
         // this is the one we are looking for
         val dep = allDependencies(iu, repository)
         dep
@@ -186,7 +195,7 @@ object ScalaIDEDefinition {
 }
 
 case class FeatureDefinition(
-  details: RequestedFeature,
+  details: PluginDescriptor,
   version: String,
   sdtFeatureRange: DependencyUnit,
   sdtCoreRange: DependencyUnit,
@@ -197,7 +206,7 @@ case class FeatureDefinition(
 object FeatureDefinition {
   import Ecosystem._
 
-  def apply(details: RequestedFeature, iu: InstallableUnit, repository: P2Repository): FeatureDefinition = {
+  def apply(details: PluginDescriptor, iu: InstallableUnit, repository: P2Repository): FeatureDefinition = {
     val dependencies = ScalaIDEDefinition.allDependencies(iu, repository)
 
     val sdtCore = dependencies.find(_.id == ScalaIDEId)

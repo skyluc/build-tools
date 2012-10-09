@@ -31,12 +31,14 @@ import java.io.File
  * }
  */
 class EcosystemsDescriptor(config: Config) {
-  val ecosystems: List[Ecosystem] = {
+  val ecosystems: List[EcosystemDescriptor] = {
     val ids = config.getStringList(EcosystemsDescriptor.Keys.idsKey).asScala.toList
     for(ecosystemId <- ids) yield {
       val site = config.getString(EcosystemsDescriptor.Keys.site(ecosystemId))
       val siteUrl = new URL(site)
-      Ecosystem(ecosystemId, siteUrl)
+      val baseSite = config.getString(EcosystemsDescriptor.Keys.baseSite(ecosystemId))
+      val baseSiteUrl = new URL(baseSite)
+      EcosystemDescriptor(ecosystemId, siteUrl, baseSiteUrl)
     }
   }
 }
@@ -46,6 +48,7 @@ object EcosystemsDescriptor {
     val root = "ecosystems-descriptor"
     val idsKey = root + ".ids"
     def site(ecosystemId: String): String = root + "." + ecosystemId + ".site"
+    def baseSite(ecosystemId: String): String = root + "." + ecosystemId + ".baseSite"
   }
   
   def load(file: File): EcosystemsDescriptor = {
@@ -53,4 +56,4 @@ object EcosystemsDescriptor {
   }
 }
 
-final case class Ecosystem(id: String, site: URL)
+final case class EcosystemDescriptor(id: String, site: URL, baseSite: URL)

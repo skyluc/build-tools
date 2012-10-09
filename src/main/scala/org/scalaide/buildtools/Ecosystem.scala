@@ -27,7 +27,7 @@ object Ecosystem {
   /** default location of the feature description fise in a feature project */
   val FeatureDescriptor = "feature.xml"
   /** default location of the ecosystem configuration */
-  val EcosystemConfigFile = "config.properties"
+  val EcosystemConfigFile = "ecosystem.conf"
   /** default location of the feature configuration files */
   val EcosystemFeatureFolder = "features"
 

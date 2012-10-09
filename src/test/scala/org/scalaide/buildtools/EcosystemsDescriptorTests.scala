@@ -13,10 +13,10 @@ class EcosystemsDescriptorTests {
 
   @Test
   def ecosystemsDescriptorIsCorrectlyLoaded() {
-    val expected = List(Ecosystem("stable-scala29", new URL("http://download.scala-ide.org/ecosystem/scala29/stable/site")),
-                        Ecosystem("stable-scala210", new URL("http://download.scala-ide.org/ecosystem/scala210/stable/site")),
-                        Ecosystem("dev-scala29", new URL("http://download.scala-ide.org/ecosystem/scala29/dev/site")),
-                        Ecosystem("dev-scala210", new URL("http://download.scala-ide.org/ecosystem/scala210/dev/site")))    
+    val expected = List(EcosystemDescriptor("stable-scala29", new URL("http://download.scala-ide.org/ecosystem/scala29/stable/site"), new URL("http://download.scala-ide.org/ecosystem/scala29/stable/base/site")),
+                        EcosystemDescriptor("stable-scala210", new URL("http://download.scala-ide.org/ecosystem/scala210/stable/site"), new URL("http://download.scala-ide.org/ecosystem/scala210/stable/base/site")),
+                        EcosystemDescriptor("dev-scala29", new URL("http://download.scala-ide.org/ecosystem/scala29/dev/site"), new URL("http://download.scala-ide.org/ecosystem/scala29/dev/base/site")),
+                        EcosystemDescriptor("dev-scala210", new URL("http://download.scala-ide.org/ecosystem/scala210/dev/site"), new URL("http://download.scala-ide.org/ecosystem/scala210/dev/base/site")))    
     val resource = EcosystemsDescriptor.getClass().getResource("ecosystems.conf")
     val file = new java.io.File(resource.toURI())
 

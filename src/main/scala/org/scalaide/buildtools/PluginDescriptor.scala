@@ -77,6 +77,10 @@ final class PluginDescriptor(name: String, config: Config) {
     case None => throw new FailedToRetrieveKeyOrValue(name, path, new NoSuchElementException(path))
     case Some(string) => string
   }
+  
+  override def toString() = {
+    "PluginDescriptor(%s)".format(name)
+  }
 }
 
 object PluginDescriptor {
@@ -105,7 +109,7 @@ object PluginDescriptor {
   private case object Stable extends Category
 
   /** Load in memory all plugin descriptors files in the passed `folder`.*/
-  def loadAll(folder: File): Array[Either[PluginDescriptorException, PluginDescriptor]] = {
+  def loadAll(folder: File): Seq[Either[PluginDescriptorException, PluginDescriptor]] = {
     require(folder.isDirectory, folder.getAbsolutePath + " is not a folder")
 
     val files = folder.listFiles()
