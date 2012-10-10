@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <prerequisites>
+    <maven>3.0</maven>
+  </prerequisites>
+  <groupId>org.scala-ide</groupId>
+  <artifactId>org.scala-ide.merge-site</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <description>Build a repository containing multiple versions</description>
+  <packaging>pom</packaging>
+
+  <properties>
+    <encoding>UTF-8</encoding>
+    <tycho.version>0.15.0</tycho.version>
+
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho.extras</groupId>
+        <artifactId>tycho-p2-extras-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>mirror</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <source>
+            <!-- source repositories to mirror from -->
+            <repository>
+               <url>${repo.source}</url>
+               <!-- supported layouts are "p2-metadata", "p2-artifacts", and "p2" (for joint repositories; default) -->
+               <layout>p2</layout>
+            </repository>
+          </source>
+          <destination>${repo.dest}</destination>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
