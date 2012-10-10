@@ -40,8 +40,6 @@ object UpdateAddonManifests {
       System.exit(2)
     }
 
-    // need to stop Dispatch in any cases
-    Http.shutdown()
   }
 
 }
@@ -51,7 +49,11 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
   import Ecosystem._
 
   def apply(): Either[String, String] = {
-    P2Repository.fromUrl(repoURL).right.flatMap(updateVersions(_))
+    val res= P2Repository.fromUrl(repoURL).right.flatMap(updateVersions(_))
+    
+    // need to stop Dispatch in any cases
+    Http.shutdown()
+    res
   }
 
   /**

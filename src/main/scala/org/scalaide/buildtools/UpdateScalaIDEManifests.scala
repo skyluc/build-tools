@@ -4,6 +4,7 @@ import java.io.File
 import scala.io.Source
 import java.io.FileWriter
 import org.osgi.framework.Version
+import dispatch.Http
 
 object UpdateScalaIDEManifests {
 
@@ -26,6 +27,7 @@ object UpdateScalaIDEManifests {
     }.getOrElse(System.getProperty("user.dir"))
 
     new UpdateScalaIDEManifests(rootFolder)()
+    
   }
 
 }
@@ -48,6 +50,9 @@ class UpdateScalaIDEManifests(root: String) {
     }
 
     println("Build tools: Updating versions in Scala IDE manifests - Done.")
+    
+    // need to stop Dispatch in any cases
+    Http.shutdown()
   }
 
   /**

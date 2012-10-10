@@ -6,6 +6,7 @@ import scala.collection.mutable.HashMap
 import java.net.URL
 import org.osgi.framework.Version
 import scala.collection.immutable.TreeSet
+import dispatch.Http
 
 /**
  * !!! This object not thread safe !!! It was used in a single threaded system when implemented.
@@ -55,10 +56,15 @@ class GenerateEcosystemBuilds(rootFolder: String) {
         None
     })
 
-    for {
+    val res= for {
       availableFeatures <- findFeatures(requestedFeatures.toList).right
       ecosystemToScalaIDEToAvailableFeatures <- getAvailableScalaIDEs(ecosystems, requestedFeatures.toList, availableFeatures).right
     } yield MavenProject2.generateEcosystemsProjects(ecosystemToScalaIDEToAvailableFeatures, new File(rootFolder, "target/builds"))
+
+    
+    // need to stop Dispatch in any cases
+    Http.shutdown()
+    res
 
   }
 
