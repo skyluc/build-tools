@@ -18,15 +18,19 @@ import java.io.File
  *   ids = ["stable-scala29", "stable-scala210", "dev-scala29", "dev-scala210"] 
  *   stable-scala29 {
  *     site = "http://download.scala-ide.org/ecosystem/scala29/stable/site"
+ *     base = "http://download.scala-ide.org/ecosystem/scala29/stable/staging"
  *   }
  *   stable-scala210 {
  *     site = "http://download.scala-ide.org/ecosystem/scala210/stable/site"
+ *     base = "http://download.scala-ide.org/ecosystem/scala210/stable/staging"
  *   }
  *   dev-scala29 {
  *     site = "http://download.scala-ide.org/ecosystem/scala29/dev/site"
+ *     base = "http://download.scala-ide.org/ecosystem/scala29/dev/staging"
  *   }
  *   dev-scala210 {
  *     site = "http://download.scala-ide.org/ecosystem/scala210/dev/site"
+ *     base = "http://download.scala-ide.org/ecosystem/scala210/dev/staging"
  *   }
  * }
  */
