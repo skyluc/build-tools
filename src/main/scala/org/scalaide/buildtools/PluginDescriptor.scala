@@ -25,6 +25,7 @@ import scala.collection.JavaConverters.asScalaBufferConverter
  *    update-sites = ["http://scala-ide.dreamhosters.com/nightly-update-worksheet-scalaide21-29/site/",
  *                    "http://scala-ide.dreamhosters.com/nightly-update-worksheet-scalaide21-210/site/"]
  *    source-feature-id = org.scala-ide.worksheet.source.feature
+ *    website = "https://github.com/scala-ide/scala-worksheet"
  *  }
  *
  *  @param name Is the plugin's feature id.

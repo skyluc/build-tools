@@ -63,6 +63,7 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
   private def updateVersions(p2Repo: P2Repository): Either[String, String] = {
     for {
       scalaIDEVersion <- getOneVersion(p2Repo, ScalaIDEId).right
+      // TODO: the version should be the one scalaIDE depends on
       scalaLibraryVersion <- getOneVersion(p2Repo, ScalaLibraryId).right
       scalaCompilerVersion <- getOneVersion(p2Repo, ScalaCompilerId).right
       scalaIDEFeatureVersion <- getOneVersion(p2Repo, ScalaIDEFeatureIdOsgi).right

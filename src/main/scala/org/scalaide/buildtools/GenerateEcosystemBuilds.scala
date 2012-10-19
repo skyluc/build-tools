@@ -68,9 +68,9 @@ class GenerateEcosystemBuilds(rootFolder: String) {
 
   }
 
-  private def getAvailableScalaIDEs(ecosystems: List[EcosystemDescriptor], requestedFeatures: List[PluginDescriptor], availableFeatures: List[FeatureDefinition]): Either[String, Map[EcosystemDescriptor, Map[ScalaIDEDefinition, List[FeatureDefinition]]]] = {
+  private def getAvailableScalaIDEs(ecosystems: List[EcosystemDescriptor], requestedFeatures: List[PluginDescriptor], availableFeatures: List[FeatureDefinition]): Either[String, Map[EcosystemDescriptor, Map[ScalaIDEDefinition, Features]]] = {
     @tailrec
-    def loop(repositories: List[EcosystemDescriptor], definitions: Map[EcosystemDescriptor, Map[ScalaIDEDefinition, List[FeatureDefinition]]]): Either[String, Map[EcosystemDescriptor, Map[ScalaIDEDefinition, List[FeatureDefinition]]]] = {
+    def loop(repositories: List[EcosystemDescriptor], definitions: Map[EcosystemDescriptor, Map[ScalaIDEDefinition, Features]]): Either[String, Map[EcosystemDescriptor, Map[ScalaIDEDefinition, Features]]] = {
       repositories match {
         case Nil =>
           Right(definitions)
@@ -86,23 +86,24 @@ class GenerateEcosystemBuilds(rootFolder: String) {
     loop(ecosystems, Map())
   }
 
-  private def findScalaIDEsAndResolvedAvailableFeatures(ecosystem: EcosystemDescriptor, requestedFeatures: List[PluginDescriptor], availableFeatures: List[FeatureDefinition]): Either[String, Map[ScalaIDEDefinition, List[FeatureDefinition]]] = {
+  private def findScalaIDEsAndResolvedAvailableFeatures(ecosystem: EcosystemDescriptor, requestedFeatures: List[PluginDescriptor], availableFeatures: List[FeatureDefinition]): Either[String, Map[ScalaIDEDefinition, Features]] = {
     for {
       repository <- Repositories(ecosystem.site).right
       baseRepository <- Repositories(ecosystem.baseSite).right
     } yield findScalaIDEsAndResolvedAvailableFeatures(repository, baseRepository, requestedFeatures, availableFeatures)
   }
 
-  private def findScalaIDEsAndResolvedAvailableFeatures(repository: P2Repository, baseRepository: P2Repository, requestedFeatures: List[PluginDescriptor], availableFeatures: List[FeatureDefinition]): Map[ScalaIDEDefinition, List[FeatureDefinition]] = {
-    val allAvailableFeatures = mergeFeatureList(availableFeatures, findExistingFeatures(requestedFeatures, repository))
+  private def findScalaIDEsAndResolvedAvailableFeatures(repository: P2Repository, baseRepository: P2Repository, requestedFeatures: List[PluginDescriptor], availableFeatures: List[FeatureDefinition]): Map[ScalaIDEDefinition, Features] = {
+    val allAvailableFeatures = mergeFeatureList(findExistingFeatures(requestedFeatures, repository), availableFeatures)
 
-    baseRepository.findIU(ScalaIDEFeatureIdOsgi).foldLeft(Map[ScalaIDEDefinition, List[FeatureDefinition]]())((m, ui) =>
+    baseRepository.findIU(ScalaIDEFeatureIdOsgi).foldLeft(Map[ScalaIDEDefinition, Features]())((m, ui) =>
       // TODO: might be a nice place to check versions
-      m + (ScalaIDEDefinition(ui, baseRepository) -> filterFeaturesFor(ui, allAvailableFeatures)))
+      m + (ScalaIDEDefinition(ui, baseRepository) -> filterFeaturesFor(ui, allAvailableFeatures, repository)))
   }
 
-  private def filterFeaturesFor(scalaIDE: InstallableUnit, availableFeatures: List[FeatureDefinition]): List[FeatureDefinition] = {
-    availableFeatures.filter(f => ScalaIDEDefinition.matches(scalaIDE.version, f.sdtFeatureRange.range)).groupBy(_.details.featureId).map(t => TreeSet(t._2: _*)(FeatureDefinition.DescendingOrdering).head).toList
+  private def filterFeaturesFor(scalaIDE: InstallableUnit, availableFeatures: List[FeatureDefinition], baseRepository: P2Repository): Features = {
+    val lists= availableFeatures.filter(f => ScalaIDEDefinition.matches(scalaIDE.version, f.sdtFeatureRange.range)).groupBy(_.details.featureId).map(t => TreeSet(t._2: _*)(FeatureDefinition.DescendingOrdering).head).toList.partition(_.repository == baseRepository)
+    Features(lists._2, lists._1)
   }
 
   private def findFeatures(requestedFeatures: List[PluginDescriptor]): Either[String, List[FeatureDefinition]] = {
@@ -241,3 +242,5 @@ object FeatureDefinition {
   }
 
 }
+
+case class Features(available: List[FeatureDefinition], existing: List[FeatureDefinition])

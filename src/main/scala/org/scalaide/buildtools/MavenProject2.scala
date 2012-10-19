@@ -4,47 +4,95 @@ import java.io.File
 import java.net.URL
 import scala.xml.Elem
 import scala.xml.XML
+import scala.collection.immutable.TreeSet
 
 object MavenProject2 {
-  
-  val artifactIdSuffix= Iterator.from(1)
+
+  val artifactIdSuffix = Iterator.from(1)
 
   private def saveXml(file: File, xml: Elem) {
     XML.save(file.getAbsolutePath(), xml, "UTF-8", true)
   }
 
-  def generateEcosystemsProjects(ecosystemToScalaIDEToAvailableFeatures: Map[EcosystemDescriptor, Map[ScalaIDEDefinition, Seq[FeatureDefinition]]], baseFolder: File): String = {
+  def generateEcosystemsProjects(ecosystemToScalaIDEToAvailableFeatures: Map[EcosystemDescriptor, Map[ScalaIDEDefinition, Features]], baseFolder: File): String = {
+
+    println(ecosystemToScalaIDEToAvailableFeatures)
 
     if (baseFolder.exists()) {
       FileUtils.deleteFull(baseFolder)
     }
     baseFolder.mkdirs()
 
-    val ecosystemFolders = ecosystemToScalaIDEToAvailableFeatures.map(e => generateEcosystemProject(e._1, e._2, baseFolder)).toSeq
+    val ecosystemFolders = ecosystemToScalaIDEToAvailableFeatures.flatMap(e => generateEcosystemProject(e._1, e._2, baseFolder)).toSeq
 
-    saveXml(new File(baseFolder, "pom.xml"), createTopPomXml(ecosystemFolders))
+    if (ecosystemFolders isEmpty) {
+      "Nothing to do"
+    } else {
+      saveXml(new File(baseFolder, "pom.xml"), createTopPomXml(ecosystemFolders))
 
-    "OK"
+      "OK"
+    }
   }
 
-  def generateEcosystemProject(ecosystem: EcosystemDescriptor, scalaIDEToAvailableFeatures: Map[ScalaIDEDefinition, Seq[FeatureDefinition]], baseFolder: File): File = {
-    val ecosystemFolder = new File(baseFolder, ecosystem.id)
-    ecosystemFolder.mkdir()
+  def generateEcosystemProject(ecosystem: EcosystemDescriptor, scalaIDEToAvailableFeatures: Map[ScalaIDEDefinition, Features], baseFolder: File): Option[File] = {
+    // check if it makes sense to regenerate the ecosystem
+    if (hasNewContent(ecosystem, scalaIDEToAvailableFeatures)) {
 
-    val artifactId = "ecosystem.%s".format(ecosystem.id)
+      val ecosystemFolder = new File(baseFolder, ecosystem.id)
+      ecosystemFolder.mkdir()
 
-    val featureFolders: Seq[File] = scalaIDEToAvailableFeatures.flatMap(s => generateScalaIDEProjects(s._1, s._2, artifactId, ecosystemFolder)).toSeq
+      val artifactId = "ecosystem.%s".format(ecosystem.id)
 
-    saveXml(new File(ecosystemFolder, "pom.xml"), createEcosystemPomXml(artifactId, ecosystem.baseSite, ecosystemFolder, featureFolders))
+      val featureFolders: Seq[File] = scalaIDEToAvailableFeatures.flatMap(s => generateScalaIDEProjects(s._1, s._2, artifactId, ecosystemFolder)).toSeq
+      saveXml(new File(ecosystemFolder, "pom.xml"), createEcosystemPomXml(artifactId, ecosystem.baseSite, ecosystemFolder, featureFolders))
 
-    ecosystemFolder
+      Some(ecosystemFolder)
+
+    } else {
+      None
+    }
   }
 
-  def generateScalaIDEProjects(scalaIDE: ScalaIDEDefinition, features: Seq[FeatureDefinition], parentId: String, baseFolder: File): Seq[File] = {
+  private def hasNewContent(ecosystem: EcosystemDescriptor, scalaIDEToAvailableFeatures: Map[ScalaIDEDefinition, Features]): Boolean = {
+
+    // at this point, the sites exist
+    val siteRepo = Repositories(ecosystem.site).right.get
+    val stagingRepo = Repositories(ecosystem.baseSite).right.get
+
+    existsMissing(stagingRepo.uis, siteRepo.uis) || existsMissing(scalaIDEToAvailableFeatures)
+  }
+
+  /**
+   * Check if all content of the staging site is already part of the public site.
+   * Returns <code>true</code> if some are missing, <code>false</code> otherwise.
+   */
+  private def existsMissing(stagingUIs: Map[String, TreeSet[InstallableUnit]], siteUIs: Map[String, TreeSet[InstallableUnit]]): Boolean = {
+    stagingUIs.exists((stagingFeature) => {
+      siteUIs.get(stagingFeature._1) match {
+        case Some(siteFeatureIUs) =>
+          // the list of versions is different
+          stagingFeature._2.map(_.version) != siteFeatureIUs.map(_.version)
+        case None =>
+          // UI defined in staging, but not in site
+          true
+      }
+    })
+  }
+
+  /**
+   * Check if it exists any add-on version to add or refresh.
+   */
+  private def existsMissing(scalaIDEToAvailableFeatures: Map[ScalaIDEDefinition, Features]): Boolean = {
+    scalaIDEToAvailableFeatures.exists(s => {
+      !s._2.available.isEmpty
+    })
+  }
+
+  def generateScalaIDEProjects(scalaIDE: ScalaIDEDefinition, features: Features, parentId: String, baseFolder: File): Seq[File] = {
     val scalaIDEFolder = new File(baseFolder, scalaIDE.sdtFeatureVersion.toString())
     scalaIDEFolder.mkdir()
 
-    features.map(f => generateFeatureProject(f, parentId, scalaIDE.repository, scalaIDEFolder))
+    (features.available ::: features.existing).map(f => generateFeatureProject(f, parentId, scalaIDE.repository, scalaIDEFolder))
   }
 
   def generateFeatureProject(feature: FeatureDefinition, parentId: String, scalaIDERepository: P2Repository, baseFolder: File): File = {
@@ -89,7 +137,7 @@ object MavenProject2 {
         <maven>3.0</maven>
       </prerequisites>
       <parent>
-    <groupId>org.scalaide</groupId>
+        <groupId>org.scalaide</groupId>
         <artifactId>ecosystem.build</artifactId>
         <version>0.1.0-SNAPSHOT</version>
       </parent>
@@ -230,7 +278,7 @@ object MavenProject2 {
   private def featureXml(feature: FeatureDefinition): List[Elem] =
     // TODO: fix category
     // TODO: fix sourceFeatureId, should be option
-    List(featureXml(feature.details.featureId, feature.version.toString, "incubation")) :+  featureXml(feature.details.sourceFeatureId, feature.version.toString, "source")
+    List(featureXml(feature.details.featureId, feature.version.toString, "incubation")) :+ featureXml(feature.details.sourceFeatureId, feature.version.toString, "source")
 
   private def featureXml(id: String, version: String, category: String): Elem = {
     <feature url={ "features/" + id + "_0.0.0.jar" } id={ id } version={ version }>

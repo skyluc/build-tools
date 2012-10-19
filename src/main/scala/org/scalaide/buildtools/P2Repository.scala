@@ -9,7 +9,7 @@ import java.io.IOException
 import java.util.zip.ZipException
 import scala.xml.Elem
 import org.xml.sax.SAXException
-import java.net.{URL => jURL}
+import java.net.{ URL => jURL }
 import scala.xml.Node
 import org.osgi.framework.Version
 import scala.collection.immutable.TreeSet
@@ -19,7 +19,7 @@ case class DependencyUnit(id: String, range: String)
 object DependencyUnit {
 
   def apply(required: Node): Option[DependencyUnit] = {
-    val namespace= (required \ "@namespace" text)
+    val namespace = (required \ "@namespace" text)
     if (namespace == "osgi.bundle" || namespace == "org.eclipse.equinox.p2.iu")
       Some(new DependencyUnit(required \ "@name" text, required \ "@range" text))
     else
@@ -41,11 +41,11 @@ object InstallableUnit {
   implicit object DescendingOrdering extends Ordering[InstallableUnit] {
     override def compare(x: InstallableUnit, y: InstallableUnit): Int = {
       val diffId = x.id.compareTo(y.id)
-      if(diffId == 0) -1 * x.version.compareTo(y.version) // same bundle name, compare versions
+      if (diffId == 0) -1 * x.version.compareTo(y.version) // same bundle name, compare versions
       else diffId
     }
   }
-  
+
   private def getDependencies(unit: Node): List[DependencyUnit] = {
     (unit \ "requires" \ "required" flatMap (DependencyUnit(_))).toList
   }
@@ -55,12 +55,21 @@ object InstallableUnit {
   private def isFeature(unit: Node) = unit \ "properties" \ "property" exists (e => (e \ "@name" text) == "org.eclipse.equinox.p2.type.group" && (e \ "@value" text) == "true")
 }
 
-case class P2Repository private(uis: Map[String, TreeSet[InstallableUnit]], location: String) {
+case class P2Repository private (uis: Map[String, TreeSet[InstallableUnit]], location: String) {
 
-  def findIU(unitId: String): TreeSet[InstallableUnit] = 
+  def findIU(unitId: String): TreeSet[InstallableUnit] =
     uis get (unitId) getOrElse (TreeSet.empty[InstallableUnit])
-  
+
   override def toString = "P2Repository(%s)".format(location)
+
+  override def equals(o: Any): Boolean = {
+    o match {
+      case P2Repository(_, `location`) => true
+      case _ => false
+    }
+  }
+
+  override def hashCode: Int = location.hashCode()
 
 }
 
@@ -72,7 +81,7 @@ object P2Repository {
     val unitsXML = (contentXml \ "units" \\ "unit")
     val units = unitsXML.flatMap(InstallableUnit(_))
     val grouped = units.groupBy(_.id)
-    val sorted = for((key, values) <- grouped) yield (key, TreeSet(values : _*))
+    val sorted = for ((key, values) <- grouped) yield (key, TreeSet(values: _*))
     P2Repository(sorted, location)
   }
 
@@ -94,7 +103,7 @@ object P2Repository {
   def fromUrl(repoUrl: String): Either[String, P2Repository] = {
     fromUrl(new jURL(repoUrl))
   }
-  
+
   def fromUrl(repoUrl: jURL): Either[String, P2Repository] = {
     repoUrl.getProtocol() match {
       case "file" =>
