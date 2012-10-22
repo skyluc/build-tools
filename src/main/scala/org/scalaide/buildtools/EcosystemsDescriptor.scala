@@ -40,9 +40,13 @@ class EcosystemsDescriptor(config: Config) {
     for(ecosystemId <- ids) yield {
       val site = config.getString(EcosystemsDescriptor.Keys.site(ecosystemId))
       val siteUrl = new URL(site)
-      val baseSite = config.getString(EcosystemsDescriptor.Keys.baseSite(ecosystemId))
-      val baseSiteUrl = new URL(baseSite)
-      EcosystemDescriptor(ecosystemId, siteUrl, baseSiteUrl)
+      val base = config.getString(EcosystemsDescriptor.Keys.base(ecosystemId))
+      val baseUrl = new URL(base)
+      val nextSite = config.getString(EcosystemsDescriptor.Keys.nextSite(ecosystemId))
+      val nextSiteUrl = new URL(nextSite)
+      val nextBase = config.getString(EcosystemsDescriptor.Keys.nextBase(ecosystemId))
+      val nextBaseUrl = new URL(nextBase)
+      EcosystemDescriptor(ecosystemId, siteUrl, baseUrl, nextSiteUrl, nextBaseUrl)
     }
   }
 }
@@ -52,7 +56,9 @@ object EcosystemsDescriptor {
     val root = "ecosystems-descriptor"
     val idsKey = root + ".ids"
     def site(ecosystemId: String): String = root + "." + ecosystemId + ".site"
-    def baseSite(ecosystemId: String): String = root + "." + ecosystemId + ".baseSite"
+    def base(ecosystemId: String): String = root + "." + ecosystemId + ".base"
+    def nextSite(ecosystemId: String): String = root + "." + ecosystemId + ".nextSite"
+    def nextBase(ecosystemId: String): String = root + "." + ecosystemId + ".nextBase"
   }
   
   def load(file: File): EcosystemsDescriptor = {
@@ -60,4 +66,4 @@ object EcosystemsDescriptor {
   }
 }
 
-final case class EcosystemDescriptor(id: String, site: URL, baseSite: URL)
+final case class EcosystemDescriptor(id: String, site: URL, base: URL, nextSite: URL, nextBase: URL)

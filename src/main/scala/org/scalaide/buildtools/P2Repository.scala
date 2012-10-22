@@ -13,6 +13,27 @@ import java.net.{ URL => jURL }
 import scala.xml.Node
 import org.osgi.framework.Version
 import scala.collection.immutable.TreeSet
+import java.net.URL
+import scala.collection.mutable.HashMap
+
+/**
+ * !!! This object not thread safe !!! It was used in a single threaded system when implemented.
+ */
+object Repositories {
+
+  val cache = HashMap[URL, P2Repository]()
+
+  def apply(location: URL): P2Repository = {
+    cache.get(location) match {
+      case Some(repo) =>
+        repo
+      case None =>
+        val repo = P2Repository.fromUrl(location)
+        cache.put(location, repo)
+        repo
+    }
+  }
+}
 
 case class DependencyUnit(id: String, range: String)
 
@@ -55,22 +76,33 @@ object InstallableUnit {
   private def isFeature(unit: Node) = unit \ "properties" \ "property" exists (e => (e \ "@name" text) == "org.eclipse.equinox.p2.type.group" && (e \ "@value" text) == "true")
 }
 
-case class P2Repository private (uis: Map[String, TreeSet[InstallableUnit]], location: String) {
+trait P2Repository {
+  def uis: Map[String, TreeSet[InstallableUnit]]
+  def findIU(unitId: String): TreeSet[InstallableUnit]
+  def location: String
+}
 
-  def findIU(unitId: String): TreeSet[InstallableUnit] =
+case class ValidP2Repository (uis: Map[String, TreeSet[InstallableUnit]], location: String) extends P2Repository {
+
+  override def findIU(unitId: String): TreeSet[InstallableUnit] =
     uis get (unitId) getOrElse (TreeSet.empty[InstallableUnit])
 
   override def toString = "P2Repository(%s)".format(location)
 
   override def equals(o: Any): Boolean = {
     o match {
-      case P2Repository(_, `location`) => true
+      case ValidP2Repository(_, `location`) => true
       case _ => false
     }
   }
 
   override def hashCode: Int = location.hashCode()
 
+}
+
+case class ErrorP2Repository (errorMessage: String, location: String) extends P2Repository {
+  override def findIU(unitId: String): TreeSet[InstallableUnit] = TreeSet()
+  override def uis: Map[String, TreeSet[InstallableUnit]] = Map()
 }
 
 object P2Repository {
@@ -82,7 +114,7 @@ object P2Repository {
     val units = unitsXML.flatMap(InstallableUnit(_))
     val grouped = units.groupBy(_.id)
     val sorted = for ((key, values) <- grouped) yield (key, TreeSet(values: _*))
-    P2Repository(sorted, location)
+    ValidP2Repository(sorted, location)
   }
 
   def fromString(content: String): P2Repository = {
@@ -100,11 +132,11 @@ object P2Repository {
    *        before exiting the application, otherwise threads may hang on
    *        to the current process.
    */
-  def fromUrl(repoUrl: String): Either[String, P2Repository] = {
+  def fromUrl(repoUrl: String): P2Repository = {
     fromUrl(new jURL(repoUrl))
   }
 
-  def fromUrl(repoUrl: jURL): Either[String, P2Repository] = {
+  def fromUrl(repoUrl: jURL): P2Repository = {
     repoUrl.getProtocol() match {
       case "file" =>
         fromLocalFolder(repoUrl.getFile())
@@ -113,18 +145,22 @@ object P2Repository {
     }
   }
 
-  def fromLocalFolder(repoFolder: String): Either[String, P2Repository] = {
+  def fromLocalFolder(repoFolder: String): P2Repository = {
     val contentFile = new File(repoFolder, CompressedContentFile)
+    val folderUrl = "file://" + repoFolder
     if (contentFile.exists && contentFile.isFile) {
-      for {
-        xml <- getContentsFromZipFile(contentFile).right
-      } yield fromXML(xml, "file://" + repoFolder)
+      getContentsFromZipFile(contentFile) match {
+        case Right(xml) =>
+          fromXML(xml, folderUrl)
+        case Left(msg) =>
+          ErrorP2Repository(msg, folderUrl)
+      }
     } else {
-      Left("%s doesn't exist, or is not a file".format(contentFile.getAbsolutePath()))
+      ErrorP2Repository("%s doesn't exist, or is not a file".format(contentFile.getAbsolutePath()), folderUrl)
     }
   }
 
-  def fromHttpUrl(repoUrl: String): Either[String, P2Repository] = {
+  def fromHttpUrl(repoUrl: String): P2Repository = {
     val tmpFile = File.createTempFile("downloaded-content", ".jar")
     val svc = url(repoUrl) / CompressedContentFile
 
@@ -133,11 +169,17 @@ object P2Repository {
     // get rid of the exception
     val stringExceptionHandle = for (ex <- downloadHandle.left) yield "Error downloading file " + ex.getMessage()
 
-    for {
+    val res= for {
       d <- stringExceptionHandle().right
       xml <- getContentsFromZipFile(tmpFile).right
     } yield fromXML(xml, repoUrl)
-    //  } finally Http.shutdown()
+    
+    res match {
+      case Right(p2Repository) =>
+        p2Repository
+      case Left(msg) =>
+        ErrorP2Repository(msg, repoUrl)
+    }
   }
 
   def getContentsFromZipFile(file: File): Either[String, Elem] = {

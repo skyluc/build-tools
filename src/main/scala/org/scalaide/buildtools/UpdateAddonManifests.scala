@@ -49,7 +49,12 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
   import Ecosystem._
 
   def apply(): Either[String, String] = {
-    val res= P2Repository.fromUrl(repoURL).right.flatMap(updateVersions(_))
+    val res= P2Repository.fromUrl(repoURL) match {
+      case r: ValidP2Repository =>
+        updateVersions(r)
+      case ErrorP2Repository(msg, _) =>
+        Left(msg)
+    }
     
     // need to stop Dispatch in any cases
     Http.shutdown()

@@ -34,8 +34,9 @@ object Ecosystem {
   /** regex to find the root option in the command line */
   val RootOption = "--root=(.*)".r
 
-  // regex for the config file
-  val ConfigComment = "#.*".r
+  val RangeRegex = "\\[([^,]*),([^\\]]*)\\]".r
+  
+  val UndefinedVersion = new Version(0, 0, 0)
   
   /** regex to find the given bundle id dependency in a manifest file */
   def idInManifest(id: String) = ("(.*" + id + ")(,?.*)").r
