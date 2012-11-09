@@ -47,4 +47,6 @@ case class EcosystemBuild(
   val regenerateEcosystem: Boolean = !baseScalaIDEVersions.forall(_.associatedAvailableAddOns.isEmpty)
   
   val regenerateNextEcosystem: Boolean = !nextScalaIDEVersions.forall(_.associatedAvailableAddOns.isEmpty)
+  
+  val zippedVersion: Option[ScalaIDEVersion] = baseScalaIDEVersions.sortBy(_.version).headOption
 }

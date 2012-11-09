@@ -38,6 +38,7 @@ h4 {margin: 0.2em 0 0 0; margin-right: 3em;}
 .scalaIDEVersion {margin-bottom: 0;}
 
 .notAvailable {color: rgba(0, 0, 0, 0.5); text-shadow: none;}
+.zipped {font-weight: normal; font-style: italic; color: #404040;}
 .red {color: red;}
 .blue {color: blue;}
 .outer {display: inline-block;}
@@ -61,7 +62,7 @@ h4 {margin: 0.2em 0 0 0; margin-right: 3em;}
             </div>
             { builds.ecosystems.map(generate(_)) }
             <div class="footer">
-              generated: {timeStampPrettyPrinted}
+              generated:{ timeStampPrettyPrinted }
             </div>
           </span>
         </body>
@@ -85,7 +86,7 @@ h4 {margin: 0.2em 0 0 0; margin-right: 3em;}
       </div>
       <div class="updatedEcosystem">
         <h2>Updated ecosystem { rebuiltComment(build.regenerateEcosystem) }</h2>
-        { build.baseScalaIDEVersions.map(scalaIDEVersionWithAddOns(_)) }
+        { build.baseScalaIDEVersions.map(s => scalaIDEVersionWithAddOns(s, build.zippedVersion.exists(_ == s))) }
       </div>
       {
         if (build.nextScalaIDEVersions.isEmpty)
@@ -95,7 +96,7 @@ h4 {margin: 0.2em 0 0 0; margin-right: 3em;}
         else
           <div class="nextEcosystem">
             <h2>Next ecosystem { rebuiltComment(build.regenerateNextEcosystem) }</h2>
-            { build.nextScalaIDEVersions.map(scalaIDEVersionWithAddOns(_)) }
+            { build.nextScalaIDEVersions.map(scalaIDEVersionWithAddOns(_, false)) }
           </div>
       }
     </div>
@@ -141,9 +142,9 @@ h4 {margin: 0.2em 0 0 0; margin-right: 3em;}
     }
   }
 
-  def scalaIDEVersionWithAddOns(scalaIDEVersion: ScalaIDEVersion) = {
+  def scalaIDEVersionWithAddOns(scalaIDEVersion: ScalaIDEVersion, zipped: Boolean) = {
     <div class="scalaIDEVersion">
-      <h3>{ scalaIDEVersion.version }</h3>
+      <h3>{ scalaIDEVersion.version }{ if (zipped) <span class="zipped"> zipped</span> }</h3>
       <div class="usedAddOns">
         <h4>Existing add-ons</h4>
         {
@@ -169,7 +170,7 @@ h4 {margin: 0.2em 0 0 0; margin-right: 3em;}
       -&nbsp;{ addon.version }
     </div>
   }
-  
+
   private def timeStampPrettyPrinted = new SimpleDateFormat("yyyyMMdd-HHmm z").format(new Date())
 
 }
