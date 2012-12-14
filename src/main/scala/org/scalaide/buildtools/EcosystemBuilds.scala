@@ -22,7 +22,7 @@ object EcosystemBuilds {
         findAvailableFeatureVersionsFrom(f, repo) match {
           case Nil =>
             None
-          case l: Seq[AddOn] =>
+          case l =>
             Some((f -> l))
         }
     }.toMap
