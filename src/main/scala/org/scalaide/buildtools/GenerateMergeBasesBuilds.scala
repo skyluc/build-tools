@@ -16,7 +16,7 @@ object GenerateMergeBasesBuilds {
         root
     }.getOrElse(System.getProperty("user.dir"))
 
-    new GenerateMergeBasesBuilds(new File(rootFolder))
+    new GenerateMergeBasesBuilds(new File(rootFolder))()
   }
 }
 
