@@ -77,7 +77,7 @@ h4 {margin: 0.2em 0 0 0; margin-right: 3em;}
       <div class="currentNextAvailableScalaIDEVersions">
         <h2>Available Scala IDE versions:</h2>
         { availableScalaIDEVersions(build.baseRepo, build.baseScalaIDEVersions) }
-        { availableScalaIDEVersions(build.nextRepo, build.nextScalaIDEVersions) }
+        { availableScalaIDEVersions(build.nextBaseRepo, build.nextBaseScalaIDEVersions) }
       </div>
       <div class="currentNextExistingAddOns">
         <h2>Existing add-ons</h2>
@@ -89,14 +89,14 @@ h4 {margin: 0.2em 0 0 0; margin-right: 3em;}
         { build.baseScalaIDEVersions.map(s => scalaIDEVersionWithAddOns(s, build.zippedVersion.exists(_ == s))) }
       </div>
       {
-        if (build.nextScalaIDEVersions.isEmpty)
+        if (build.nextBaseScalaIDEVersions.isEmpty)
           <div class="nextEcosystem notAvailable">
             <h2>Next ecosystem</h2>
           </div>
         else
           <div class="nextEcosystem">
             <h2>Next ecosystem { rebuiltComment(build.regenerateNextEcosystem) }</h2>
-            { build.nextScalaIDEVersions.map(scalaIDEVersionWithAddOns(_, false)) }
+            { build.nextBaseScalaIDEVersions.map(scalaIDEVersionWithAddOns(_, false)) }
           </div>
       }
     </div>

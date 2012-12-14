@@ -1,5 +1,7 @@
 package org.scalaide.buildtools
 
+import org.osgi.framework.Version
+
 object EcosystemBuild {
 
   import Ecosystem._
@@ -13,22 +15,35 @@ object EcosystemBuild {
     val baseRepo = Repositories(ecosystemConf.base)
     val baseScalaIDEVersions = findScalaIDEVersions(baseRepo, existingAddOns, availableAddOns, siteRepo, featureConfs)
     val nextBaseRepo = Repositories(ecosystemConf.nextBase)
-    val nextScalaIDEVersions = findScalaIDEVersions(nextBaseRepo, nextExistingAddOns, availableAddOns, nextSiteRepo, featureConfs)
+    val nextBaseScalaIDEVersions = findScalaIDEVersions(nextBaseRepo, nextExistingAddOns, availableAddOns, nextSiteRepo, featureConfs)
+    val nextSiteScalaIDEVersions = siteRepo.findIU(ScalaIDEFeatureIdOsgi)
 
     EcosystemBuild(
       ecosystemConf.id,
       baseRepo,
       baseScalaIDEVersions,
       nextBaseRepo,
-      nextScalaIDEVersions,
+      nextBaseScalaIDEVersions,
       siteRepo,
       nextSiteRepo,
       existingAddOns,
-      nextExistingAddOns)
+      nextExistingAddOns,
+      shouldBeRegenerated(baseScalaIDEVersions, siteRepo.findIU(ScalaIDEFeatureIdOsgi)),
+      shouldBeRegenerated(nextBaseScalaIDEVersions, nextSiteRepo.findIU(ScalaIDEFeatureIdOsgi)))
   }
 
   private def findScalaIDEVersions(baseRepo: P2Repository, existingAddOns: Map[PluginDescriptor, Seq[AddOn]], availableAddOns: Map[PluginDescriptor, Seq[AddOn]], siteRepo: P2Repository, featureConfs: Seq[PluginDescriptor]): Seq[ScalaIDEVersion] = {
     baseRepo.findIU(ScalaIDEFeatureIdOsgi).toSeq.map(ScalaIDEVersion(_, baseRepo, existingAddOns, availableAddOns, siteRepo))
+  }
+
+  private def shouldBeRegenerated(baseScalaIDEVersions: Seq[ScalaIDEVersion], siteScalaIDEVersions: Set[InstallableUnit]): Boolean = {
+    if (!baseScalaIDEVersions.forall(_.associatedAvailableAddOns.isEmpty)) {
+      true
+    } else {
+      val baseVersions: Set[Version] = baseScalaIDEVersions.map(_.version).toSet
+      val siteVersions: Set[Version] = siteScalaIDEVersions.map(_.version).toSet
+      baseVersions != siteVersions
+    }
   }
 
 }
@@ -37,16 +52,14 @@ case class EcosystemBuild(
   id: String,
   baseRepo: P2Repository,
   baseScalaIDEVersions: Seq[ScalaIDEVersion],
-  nextRepo: P2Repository,
-  nextScalaIDEVersions: Seq[ScalaIDEVersion],
+  nextBaseRepo: P2Repository,
+  nextBaseScalaIDEVersions: Seq[ScalaIDEVersion],
   siteRepo: P2Repository,
   nextSiteRepo: P2Repository,
   existingAddOns: Map[PluginDescriptor, Seq[AddOn]],
-  nextExistingAddOns: Map[PluginDescriptor, Seq[AddOn]]) {
-  
-  val regenerateEcosystem: Boolean = !baseScalaIDEVersions.forall(_.associatedAvailableAddOns.isEmpty)
-  
-  val regenerateNextEcosystem: Boolean = !nextScalaIDEVersions.forall(_.associatedAvailableAddOns.isEmpty)
-  
+  nextExistingAddOns: Map[PluginDescriptor, Seq[AddOn]],
+  val regenerateEcosystem: Boolean,
+  val regenerateNextEcosystem: Boolean) {
+
   val zippedVersion: Option[ScalaIDEVersion] = baseScalaIDEVersions.sortBy(_.version).lastOption
 }

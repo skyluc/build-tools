@@ -34,7 +34,7 @@ object EcosystemBuildsMavenProjects {
     }
 
     val nextFolder = if (ecosystemBuild.regenerateNextEcosystem) {
-      generateEcosystemProject(ecosystemBuild.nextScalaIDEVersions, "%s-next".format(ecosystemBuild.id), ecosystemBuild.nextRepo, buildFolder, None)
+      generateEcosystemProject(ecosystemBuild.nextBaseScalaIDEVersions, "%s-next".format(ecosystemBuild.id), ecosystemBuild.nextBaseRepo, buildFolder, None)
     } else {
       Nil
     }
