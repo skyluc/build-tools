@@ -2,6 +2,8 @@ package org.scalaide.buildtools
 
 import java.io.File
 
+import Ecosystem._
+
 object EcosystemBuildsMavenProjects {
 
   private val artifactIdSuffix = Iterator.from(1)
@@ -267,7 +269,6 @@ object EcosystemBuildsMavenProjects {
   }
 
   def createScalaIDEPomXml(scalaIDEVersion: ScalaIDEVersion, parentId: String) = {
-    // TODO: support for non-indigo build
     <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <modelVersion>4.0.0</modelVersion>
       <prerequisites>
@@ -292,10 +293,10 @@ object EcosystemBuildsMavenProjects {
       </properties>
       <repositories>
         <repository>
-          <id>eclipse.indigo</id>
+          <id>eclipse.{ scalaIDEVersion.eclipseVersion.name }</id>
           <name>Eclipse p2 repository</name>
           <layout>p2</layout>
-          <url>http://download.eclipse.org/releases/indigo/</url>
+          <url>{ scalaIDEVersion.eclipseVersion.repoLocation }</url>
         </repository>
         <repository>
           <id>scalaide.repo</id>
@@ -355,17 +356,13 @@ object EcosystemBuildsMavenProjects {
       <properties>
         <encoding>UTF-8</encoding>
         <tycho.version>0.15.0</tycho.version>
-        <!-- p2 repositories location -->
-        <repo.eclipse.indigo>http://download.eclipse.org/releases/indigo/</repo.eclipse.indigo>
-        <!-- dependencies repos -->
-        <eclipse.codename>indigo</eclipse.codename>
       </properties>
       <repositories>
         <repository>
-          <id>eclipse.indigo</id>
+          <id>eclipse.{ scalaIDEVersion.eclipseVersion.name }</id>
           <name>Eclipse p2 repository</name>
           <layout>p2</layout>
-          <url>http://download.eclipse.org/releases/indigo/</url>
+          <url>{ scalaIDEVersion.eclipseVersion.repoLocation }</url>
         </repository>
         <repository>
           <id>scalaide.repo</id>
