@@ -35,7 +35,7 @@ object Ecosystem {
   /** regex to find the root option in the command line */
   val RootOption = "--root=(.*)".r
 
-  val RangeRegex = "[\\[\\(]([^,]*),([^\\]\\)]*)[\\]\\)]".r
+  val RangeRegex = """[\[\(]([^,]*),([^\]\)]*)[\]\)]""".r
   
   val UndefinedVersion = new Version(0, 0, 0)
   
@@ -125,4 +125,3 @@ object Ecosystem {
   }
 
 }
-

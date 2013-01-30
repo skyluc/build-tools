@@ -14,5 +14,4 @@ case class AddOn(conf: PluginDescriptor, iu: InstallableUnit, repository: P2Repo
   def id= conf.featureId
   
   private def findDependency(id: String) = iu.dependencies.find(_.id == id)
-  
 }
