@@ -21,6 +21,7 @@ object Ecosystem {
   val ScalaIDESourceFeatureId = "org.scala-ide.sdt.source.feature"
   val ScalaIDEDevFeatureId = "org.scala-ide.sdt.dev.feature"
   val ScalaIDEFeatureIdOsgi = ScalaIDEFeatureId + FeatureSuffix
+  val JDTId = "org.eclipse.jdt.core"
 
   /** default location of the manifest file in a bundle project */
   val PluginManifest = "META-INF/MANIFEST.MF"
@@ -34,7 +35,7 @@ object Ecosystem {
   /** regex to find the root option in the command line */
   val RootOption = "--root=(.*)".r
 
-  val RangeRegex = "\\[([^,]*),([^\\]]*)\\]".r
+  val RangeRegex = """[\[\(]([^,]*),([^\]\)]*)[\]\)]""".r
   
   val UndefinedVersion = new Version(0, 0, 0)
   
@@ -92,6 +93,35 @@ object Ecosystem {
 
   private def warning(message: String) {
     println("WARNING: %s".format(message))
+  }
+
+  object EclipseVersion {
+    def apply(range: String): Option[EclipseVersion] = {
+      range match {
+        case RangeRegex(low, high) =>
+          val v = new Version(low)
+          if (v.getMajor() == 3 && v.getMinor() < 8) {
+            Some(EclipseIndigo)
+          } else {
+            Some(EclipseJuno)
+          }
+      }
+    }
+  }
+
+  abstract class EclipseVersion(val name: String, val repoLocation: String)
+
+  case object EclipseIndigo extends EclipseVersion("indigo", "http://download.eclipse.org/releases/indigo/")
+
+  case object EclipseJuno extends EclipseVersion("juno", "http://download.eclipse.org/releases/juno/")
+
+  def findStrictVersion(range: String) = {
+    range match {
+      case RangeRegex(low, high) if (low == high) =>
+        new Version(low)
+      case _ =>
+        UndefinedVersion
+    }
   }
 
 }
