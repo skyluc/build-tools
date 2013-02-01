@@ -95,7 +95,7 @@ class PluginDescriptorTest {
 
   @Test
   def loadPluginDescriptor() {
-    val resource = PluginDescriptor.getClass().getResource("org.scala-ide.worksheet.feature")
+    val resource = getClass().getResource("/org.scala-ide.worksheet.feature")
     val file = new java.io.File(resource.toURI())
     PluginDescriptor.load(file) match {
       case Left(ex) => Assert.fail(ex.getMessage())
@@ -111,7 +111,7 @@ class PluginDescriptorTest {
 
   @Test(expected = classOf[FailedToRetrieveKeyOrValue])
   def loadFailsIfMandatoryKeyIsMissing() {
-    val resource = PluginDescriptor.getClass().getResource("org.scala-ide.worksheet.feature-incorrect")
+    val resource = getClass().getResource("/org.scala-ide.worksheet.feature-incorrect")
     val file = new java.io.File(resource.toURI())
     PluginDescriptor.load(file)
   }
