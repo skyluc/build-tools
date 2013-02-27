@@ -15,6 +15,8 @@ import org.osgi.framework.Version
 import scala.collection.immutable.TreeSet
 import java.net.URL
 import scala.collection.mutable.HashMap
+import scala.util.control.Exception.catching
+import java.net.MalformedURLException
 
 /**
  * !!! This object not thread safe !!! It was used in a single threaded system when implemented.
@@ -133,7 +135,10 @@ object P2Repository {
    *        to the current process.
    */
   def fromUrl(repoUrl: String): P2Repository = {
-    fromUrl(new jURL(repoUrl))
+    catching(classOf[MalformedURLException]) either fromUrl(new jURL(repoUrl)) match {
+      case Left(exception) => ErrorP2Repository(exception.getLocalizedMessage, repoUrl)
+      case Right(repo) => repo 
+    }
   }
 
   def fromUrl(repoUrl: jURL): P2Repository = {

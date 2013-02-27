@@ -102,4 +102,15 @@ class P2RepositoryTest {
         )
     Assert.assertEquals("Scala Library not found", expected, units)
   }
+   
+  @Test def repoWithInvalidUrl {
+    val badUrlRepo = P2Repository.fromUrl("this isnt a url")
+    Assert.assertTrue("Must produce an ErrorP2Repository given an invalid URL", badUrlRepo.isInstanceOf[ErrorP2Repository])
+
+    // Running P2Repository.fromUrl("http://example.com") hits the network, and there's no mocking
+    // in these tests yet.  Don't test the good url case yet.
+    //
+    // val goodUrlRepo = P2Repository.fromUrl("http://example.com")
+    // Assert.assertTrue("Must produce a ValidP2Repository given an valid URL", goodUrlRepo.isInstanceOf[ValidP2Repository])
+  }
 }
