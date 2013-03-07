@@ -109,11 +109,11 @@ object Ecosystem {
     }
   }
 
-  abstract class EclipseVersion(val name: String, val repoLocation: String)
+  abstract class EclipseVersion(val id: String, val name: String, val repoLocation: String)
 
-  case object EclipseIndigo extends EclipseVersion("indigo", "http://download.eclipse.org/releases/indigo/")
+  case object EclipseIndigo extends EclipseVersion("indigo", "Indigo", "http://download.eclipse.org/releases/indigo/")
 
-  case object EclipseJuno extends EclipseVersion("juno", "http://download.eclipse.org/releases/juno/")
+  case object EclipseJuno extends EclipseVersion("juno", "Juno", "http://download.eclipse.org/releases/juno/")
 
   def findStrictVersion(range: String) = {
     range match {

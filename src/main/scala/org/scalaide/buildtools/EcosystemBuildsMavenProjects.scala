@@ -293,7 +293,7 @@ object EcosystemBuildsMavenProjects {
       </properties>
       <repositories>
         <repository>
-          <id>eclipse.{ scalaIDEVersion.eclipseVersion.name }</id>
+          <id>eclipse.{ scalaIDEVersion.eclipseVersion.id }</id>
           <name>Eclipse p2 repository</name>
           <layout>p2</layout>
           <url>{ scalaIDEVersion.eclipseVersion.repoLocation }</url>
@@ -359,7 +359,7 @@ object EcosystemBuildsMavenProjects {
       </properties>
       <repositories>
         <repository>
-          <id>eclipse.{ scalaIDEVersion.eclipseVersion.name }</id>
+          <id>eclipse.{ scalaIDEVersion.eclipseVersion.id }</id>
           <name>Eclipse p2 repository</name>
           <layout>p2</layout>
           <url>{ scalaIDEVersion.eclipseVersion.repoLocation }</url>
