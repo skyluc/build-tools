@@ -16,19 +16,17 @@ object UpdateAddonManifests {
   def main(args: Array[String]) {
     // parse arguments
 
-    if (args.length < 1) {
-      Console.err.println(usage)
-      Console.err.println("ERROR: missing repository URL")
-      System.exit(1)
+    val (repoURL, rootFolder) = args.toList match {
+      case RootOption(_) :: Nil | Nil => 
+        Console.err.println(usage)
+        Console.err.println("ERROR: missing repository URL")
+        System.exit(1).asInstanceOf[Nothing]
+      case RootOption(root) :: url :: _ =>
+        (url, root)
+      case url :: _ =>
+        (url, System.getProperty("user.dir"))
     }
-
-    val repoURL = args.last
-
-    val rootFolder = args.init.collectFirst {
-      case RootOption(root) =>
-        root
-    }.getOrElse(System.getProperty("user.dir"))
-
+    
     // does the job
     val result = new UpdateAddonManifests(repoURL, rootFolder)()
 
