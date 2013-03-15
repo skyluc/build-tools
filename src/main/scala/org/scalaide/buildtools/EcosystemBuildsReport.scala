@@ -4,6 +4,7 @@ import java.io.File
 import scala.xml.Elem
 import java.util.Date
 import java.text.SimpleDateFormat
+import Ecosystem._
 
 object EcosystemBuildsReport {
 
@@ -36,6 +37,8 @@ h4 {margin: 0.2em 0 0 0; margin-right: 3em;}
 
 .addOnVersion {margin-bottom: 0;}
 .scalaIDEVersion {margin-bottom: 0;}
+.scalaIDEVersionDetails {margin-left: 0.5em; margin-bottom: 0; font-size: 80%;}
+.scalaIDEVersionDetails p {margin: 0;}
 
 .notAvailable {color: rgba(0, 0, 0, 0.5); text-shadow: none;}
 .zipped {font-weight: normal; font-style: italic; color: #404040;}
@@ -145,6 +148,14 @@ h4 {margin: 0.2em 0 0 0; margin-right: 3em;}
   def scalaIDEVersionWithAddOns(scalaIDEVersion: ScalaIDEVersion, zipped: Boolean) = {
     <div class="scalaIDEVersion">
       <h3>{ scalaIDEVersion.version }{ if (zipped) <span class="zipped"> zipped</span> }</h3>
+      <div class="scalaIDEVersionDetails">
+      <p>{
+          if (scalaIDEVersion.scalaVersion == UndefinedVersion)
+            "no Scala version"
+          else
+            "on Scala %s".format(scalaIDEVersion.scalaVersion)
+        }</p>
+      </div>
       <div class="usedAddOns">
         <h4>Existing add-ons</h4>
         {
