@@ -1,6 +1,6 @@
 name := "build-tools"
 
-version := "0.3.7"
+version := "0.3.8-SNAPSHOT"
 
 organization := "org.scala-ide"
 
