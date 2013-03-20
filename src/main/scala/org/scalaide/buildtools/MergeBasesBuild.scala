@@ -15,7 +15,7 @@ object MergeBasesBuild {
     val baseScalaIDEVersions = getScalaIDEVersions(baseRepo)
     val nextBaseScalaIDEVersions = getScalaIDEVersions(nextBaseRepo)
 
-    MergeBasesBuild(ecosystemConf.id, baseRepo, nextBaseRepo, !nextBaseScalaIDEVersions.forall(baseScalaIDEVersions.contains(_)))
+    MergeBasesBuild(ecosystemConf.id, baseRepo, nextBaseRepo, nextBaseRepo.isValid && !nextBaseScalaIDEVersions.forall(baseScalaIDEVersions.contains(_)))
   }
 
   private def getScalaIDEVersions(repo: P2Repository) = repo.findIU(ScalaIDEFeatureIdOsgi).map(_.version)
