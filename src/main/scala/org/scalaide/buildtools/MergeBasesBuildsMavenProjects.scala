@@ -70,14 +70,11 @@ object MergeBasesBuildsMavenProjects {
             </executions>
             <configuration>
               <source>
-                <repository>
-                  <url>{ build.baseRepo.location }</url>
-                  <layout>p2</layout>
-                </repository>
-                <repository>
-                  <url>{ build.nextBaseRepo.location }</url>
-                  <layout>p2</layout>
-                </repository>
+                {
+                  if (build.baseRepo.isValid)
+                    repoReference(build.baseRepo)
+                }
+                { repoReference(build.nextBaseRepo) }
               </source>
               <destination>${{project.build.directory}}/base</destination>
             </configuration>
@@ -86,5 +83,11 @@ object MergeBasesBuildsMavenProjects {
       </build>
     </project>
   }
+
+  private def repoReference(repo: P2Repository) =
+    <repository>
+      <url>{ repo.location }</url>
+      <layout>p2</layout>
+    </repository>
 
 }
