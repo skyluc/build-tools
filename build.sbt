@@ -1,10 +1,10 @@
 name := "build-tools"
 
-version := "0.3.9-SNAPSHOT"
+version := "0.4.0-SNAPSHOT"
 
 organization := "org.scala-ide"
 
-scalaVersion := "2.9.2"
+scalaVersion := "2.10.1"
 
 publishMavenStyle := true
 
