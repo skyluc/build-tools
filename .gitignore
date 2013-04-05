@@ -4,3 +4,4 @@ target/
 .worksheet/
 .project
 .classpath
+/bin
