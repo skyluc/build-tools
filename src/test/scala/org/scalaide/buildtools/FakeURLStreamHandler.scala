@@ -8,22 +8,22 @@ import java.net.URLConnection
 import java.net.URLStreamHandler
 import java.net.URLStreamHandlerFactory
 
-import sun.net.www.protocol.file.{Handler => FileHandler}
+import sun.net.www.protocol.file.{ Handler => FileHandler }
 
 object FakeURLStreamHandler {
-  
+
   // initialize
   URL.setURLStreamHandlerFactory(FakeURLStreamHandlerFactory)
-  
-  private val mapLock= new Object
-  private var map= Map[String, Array[Byte]]()
-  
+
+  private val mapLock = new Object
+  private var map = Map[String, Array[Byte]]()
+
   def register(path: String, content: Array[Byte]) {
     mapLock.synchronized {
       map += ((path, content))
     }
   }
-  
+
   def openConnection(url: URL): URLConnection = {
     map.get(url.getPath()) match {
       case Some(content) =>
@@ -32,22 +32,28 @@ object FakeURLStreamHandler {
         throw new ProtocolException("Unknow fake url: %s".format(url))
     }
   }
-  
+
+  def deregisterAll() {
+    mapLock.synchronized {
+      map = Map()
+    }
+  }
+
   private class FakeURLConnection(url: URL, content: Array[Byte]) extends URLConnection(url) {
-    
-    private val inputStream= new ByteArrayInputStream(content)
+
+    private val inputStream = new ByteArrayInputStream(content)
     private val outputStream = new ByteArrayOutputStream()
-    
+
     setDoInput(true);
     setDoOutput(true)
-    
+
     override def connect() {
       // nothing to do
     }
-    
+
     override def getInputStream = inputStream
     override def getOutputStream = outputStream
-    
+
   }
 }
 
