@@ -8,13 +8,13 @@ object EcosystemBuild {
 
   def apply(ecosystemConf: EcosystemDescriptor, availableAddOns: Map[PluginDescriptor, Seq[AddOn]], featureConfs: Seq[PluginDescriptor]): EcosystemBuild = {
 
-    val siteRepo = Repositories(ecosystemConf.site)
-    val nextSiteRepo = Repositories(ecosystemConf.nextSite)
+    val siteRepo = RepositoriesOld(ecosystemConf.site)
+    val nextSiteRepo = RepositoriesOld(ecosystemConf.nextSite)
     val existingAddOns = EcosystemBuilds.findAvailableFeaturesFrom(featureConfs, siteRepo)
     val nextExistingAddOns = EcosystemBuilds.findAvailableFeaturesFrom(featureConfs, nextSiteRepo)
-    val baseRepo = Repositories(ecosystemConf.base)
+    val baseRepo = RepositoriesOld(ecosystemConf.base)
     val baseScalaIDEVersions = findScalaIDEVersions(baseRepo, existingAddOns, availableAddOns, siteRepo, featureConfs)
-    val nextBaseRepo = Repositories(ecosystemConf.nextBase)
+    val nextBaseRepo = RepositoriesOld(ecosystemConf.nextBase)
     val nextBaseScalaIDEVersions = findScalaIDEVersions(nextBaseRepo, nextExistingAddOns, availableAddOns, nextSiteRepo, featureConfs)
     val nextSiteScalaIDEVersions = siteRepo.findIU(ScalaIDEFeatureIdOsgi)
 
@@ -32,11 +32,11 @@ object EcosystemBuild {
       shouldBeRegenerated(nextBaseScalaIDEVersions, nextSiteRepo.findIU(ScalaIDEFeatureIdOsgi)))
   }
 
-  private def findScalaIDEVersions(baseRepo: P2Repository, existingAddOns: Map[PluginDescriptor, Seq[AddOn]], availableAddOns: Map[PluginDescriptor, Seq[AddOn]], siteRepo: P2Repository, featureConfs: Seq[PluginDescriptor]): Seq[ScalaIDEVersion] = {
+  private def findScalaIDEVersions(baseRepo: P2RepositoryOld, existingAddOns: Map[PluginDescriptor, Seq[AddOn]], availableAddOns: Map[PluginDescriptor, Seq[AddOn]], siteRepo: P2RepositoryOld, featureConfs: Seq[PluginDescriptor]): Seq[ScalaIDEVersion] = {
     baseRepo.findIU(ScalaIDEFeatureIdOsgi).toSeq.map(ScalaIDEVersion(_, baseRepo, existingAddOns, availableAddOns, siteRepo))
   }
 
-  private def shouldBeRegenerated(baseScalaIDEVersions: Seq[ScalaIDEVersion], siteScalaIDEVersions: Set[InstallableUnit]): Boolean = {
+  private def shouldBeRegenerated(baseScalaIDEVersions: Seq[ScalaIDEVersion], siteScalaIDEVersions: Set[InstallableUnitOld]): Boolean = {
     if (!baseScalaIDEVersions.forall(_.associatedAvailableAddOns.isEmpty)) {
       true
     } else {
@@ -50,12 +50,12 @@ object EcosystemBuild {
 
 case class EcosystemBuild(
   id: String,
-  baseRepo: P2Repository,
+  baseRepo: P2RepositoryOld,
   baseScalaIDEVersions: Seq[ScalaIDEVersion],
-  nextBaseRepo: P2Repository,
+  nextBaseRepo: P2RepositoryOld,
   nextBaseScalaIDEVersions: Seq[ScalaIDEVersion],
-  siteRepo: P2Repository,
-  nextSiteRepo: P2Repository,
+  siteRepo: P2RepositoryOld,
+  nextSiteRepo: P2RepositoryOld,
   existingAddOns: Map[PluginDescriptor, Seq[AddOn]],
   nextExistingAddOns: Map[PluginDescriptor, Seq[AddOn]],
   val regenerateEcosystem: Boolean,

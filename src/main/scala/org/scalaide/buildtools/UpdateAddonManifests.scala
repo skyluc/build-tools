@@ -47,10 +47,10 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
   import Ecosystem._
 
   def apply(): Either[String, String] = {
-    val res= P2Repository.fromUrl(repoURL) match {
-      case r: ValidP2Repository =>
+    val res= P2RepositoryOld.fromUrl(repoURL) match {
+      case r: ValidP2RepositoryOld =>
         updateVersions(r)
-      case ErrorP2Repository(msg, _) =>
+      case ErrorP2RepositoryOld(msg, _) =>
         Left(msg)
     }
     
@@ -63,7 +63,7 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
    * Set strict version dependency to Scala IDE in the plugin and features found under the root, using the
    * version numbers found in the given p2 repository
    */
-  private def updateVersions(p2Repo: P2Repository): Either[String, String] = {
+  private def updateVersions(p2Repo: P2RepositoryOld): Either[String, String] = {
     for {
       scalaIDEVersion <- getOneVersion(p2Repo, ScalaIDEId).right
       // TODO: the version should be the one scalaIDE depends on
@@ -150,7 +150,7 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
    * Return the latest version of a plugin available in the repository.
    * Return an error if the plugin is not available.
    */
-  private def getOneVersion(p2Repo: P2Repository, pluginId: String): Either[String, Version] = {
+  private def getOneVersion(p2Repo: P2RepositoryOld, pluginId: String): Either[String, Version] = {
     p2Repo.findIU(pluginId).headOption match {
       case Some(iu) =>
         Right(iu.version)

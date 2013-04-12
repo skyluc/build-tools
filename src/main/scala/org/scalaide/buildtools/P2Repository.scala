@@ -33,6 +33,7 @@ object P2Repositories {
       case Some(repository) =>
         Future(repository)
       case None =>
+        // keep track of the running futures, and return the running one if it exists
         P2Repository(url).map {
           repository =>
             cacheLock.synchronized {
@@ -67,6 +68,7 @@ object P2Repository {
         tryComposite(siteUrl, "compositeContent.xml", false)
     } recover {
       case e: Exception =>
+        println("failed for %s".format(siteUrl))
         InvalidP2Repository
     }
 
@@ -75,7 +77,7 @@ object P2Repository {
   private def tryContent(siteUrl: URL, fileName: String, compressed: Boolean): Future[P2Repository] =
     Future {
       val fileURL = new URL(siteUrl, fileName)
-
+      
       val fileStream = fileURL.openConnection().getInputStream()
 
       if (compressed) {
@@ -99,7 +101,7 @@ object P2Repository {
     val units = unitsXML.flatMap(InstallableUnit(_))
     val groupedUnits = units.groupBy(_.id)
     val sortedUnits = for ((key, values) <- groupedUnits) yield (key, TreeSet(values: _*)(InstallableUnit.DescendingOrdering))
-    ContentP2Repository(sortedUnits, siteUrl)
+    ContentP2Repository(siteUrl)(sortedUnits)
 
   }
 
@@ -120,7 +122,7 @@ object P2Repository {
       case Some(children) =>
         createP2RepositoryFromChildren(siteUrl, children)
       case None =>
-        Future(InvalidP2Repository)
+        Future.successful(InvalidP2Repository)
     }
   }
 
@@ -139,7 +141,7 @@ object P2Repository {
 
   private def createP2RepositoryFromChildren(siteUrl: URL, children: List[URL]): Future[P2Repository] = {
     Future.traverse(children)(P2Repositories(_)) map {
-      CompositeP2Repository(_, siteUrl)
+      CompositeP2Repository(siteUrl, _)
     }
   }
 
@@ -176,16 +178,17 @@ trait P2Repository {
 
 }
 
-case class ContentP2Repository(UIs: Map[String, TreeSet[InstallableUnit]], location: URL) extends P2Repository {
-  override def findIU(id: String) = UIs.get(id) match {
-    case Some(units) =>
-      units
-    case None =>
-      InvalidP2Repository.emptyUISet
-  }
+case class ContentP2Repository(location: URL)(UIs: Map[String, TreeSet[InstallableUnit]]) extends P2Repository {
+  override def findIU(id: String) =
+    UIs.get(id) match {
+      case Some(units) =>
+        units
+      case None =>
+        InvalidP2Repository.emptyUISet
+    }
 }
 
-case class CompositeP2Repository(children: List[P2Repository], location: URL) extends P2Repository {
+case class CompositeP2Repository(location: URL, children: List[P2Repository]) extends P2Repository {
   override def findIU(id: String) =
     children.flatMap(_.findIU(id)).to[SortedSet]
 }
@@ -223,7 +226,9 @@ object InstallableUnit {
   }
 }
 
-case class InstallableUnit(id: String, version: Version, dependencies: List[DependencyUnit])
+case class InstallableUnit(id: String, version: Version, dependencies: List[DependencyUnit]) {
+  override def toString = "InstallableUnit(%s, %s)".format(id, version)
+}
 
 object DependencyUnit {
 

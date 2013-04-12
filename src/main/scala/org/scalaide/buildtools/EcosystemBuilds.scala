@@ -12,11 +12,11 @@ object EcosystemBuilds {
   def findAvailableFeatures(featureConfs: Seq[PluginDescriptor]): Map[PluginDescriptor, Seq[AddOn]] = {
     featureConfs.map {
       f =>
-        (f -> f.updateSites.flatMap(r => findAvailableFeatureVersionsFrom(f, Repositories(r))))
+        (f -> f.updateSites.flatMap(r => findAvailableFeatureVersionsFrom(f, RepositoriesOld(r))))
     }.toMap
   }
 
-  def findAvailableFeaturesFrom(featureConfs: Seq[PluginDescriptor], repo: P2Repository): Map[PluginDescriptor, Seq[AddOn]] = {
+  def findAvailableFeaturesFrom(featureConfs: Seq[PluginDescriptor], repo: P2RepositoryOld): Map[PluginDescriptor, Seq[AddOn]] = {
     featureConfs.flatMap {
       f =>
         findAvailableFeatureVersionsFrom(f, repo) match {
@@ -28,7 +28,7 @@ object EcosystemBuilds {
     }.toMap
   }
 
-  def findAvailableFeatureVersionsFrom(featureConf: PluginDescriptor, repository: P2Repository): Seq[AddOn] = {
+  def findAvailableFeatureVersionsFrom(featureConf: PluginDescriptor, repository: P2RepositoryOld): Seq[AddOn] = {
     repository.findIU(featureConf.featureId + FeatureSuffix).toSeq.map(AddOn(featureConf, _, repository))
   }
 

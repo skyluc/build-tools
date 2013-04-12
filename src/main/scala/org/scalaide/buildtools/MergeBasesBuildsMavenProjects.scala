@@ -84,7 +84,7 @@ object MergeBasesBuildsMavenProjects {
     </project>
   }
 
-  private def repoReference(repo: P2Repository) =
+  private def repoReference(repo: P2RepositoryOld) =
     <repository>
       <url>{ repo.location }</url>
       <layout>p2</layout>

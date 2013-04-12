@@ -4,7 +4,7 @@ import java.io.File
 import scala.Option.option2Iterable
 import dispatch.Http
 
-object GenerateEcosystemBuilds {
+object GenerateEcosystemBuildsOld {
 
   import Ecosystem._
 
@@ -16,11 +16,11 @@ object GenerateEcosystemBuilds {
         root
     }.getOrElse(System.getProperty("user.dir"))
 
-    new GenerateEcosystemBuilds(new File(rootFolder))()
+    new GenerateEcosystemBuildsOld(new File(rootFolder))
   }
 }
 
-class GenerateEcosystemBuilds(rootFolder: File) {
+class GenerateEcosystemBuildsOld(rootFolder: File) {
 
   import Ecosystem._
 

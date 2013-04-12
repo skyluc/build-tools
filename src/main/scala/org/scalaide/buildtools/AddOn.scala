@@ -3,7 +3,7 @@ package org.scalaide.buildtools
 import org.osgi.framework.Version
 import Ecosystem._
 
-case class AddOn(conf: PluginDescriptor, iu: InstallableUnit, repository: P2Repository) {
+case class AddOn(conf: PluginDescriptor, iu: InstallableUnitOld, repository: P2RepositoryOld) {
   
   // TODO: need to check for missing information
   

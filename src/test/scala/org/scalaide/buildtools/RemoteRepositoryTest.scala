@@ -11,7 +11,7 @@ class RemoteRepositoryTest {
     "org.scala-ide.sdt.core" -> new Version("2.1.0.m2-2_10-201209130850-f6ab297"))
 
   @Test def milestonesTest {
-    val p2repo = P2Repository.fromUrl("http://download.scala-ide.org/ecosystem/dev-milestone-milestone/site/")
+    val p2repo = P2RepositoryOld.fromUrl("http://download.scala-ide.org/ecosystem/dev-milestone-milestone/site/")
 
     for {
       (id, version) <- expectedIds
@@ -22,9 +22,9 @@ class RemoteRepositoryTest {
   }
 
   @Test def httpErrorTest {
-    val maybeRepo = P2Repository.fromUrl("http://download.scala-ide.org/nosuchrepository")
+    val maybeRepo = P2RepositoryOld.fromUrl("http://download.scala-ide.org/nosuchrepository")
 
-    Assert.assertTrue("Error downloading contents: " + maybeRepo, maybeRepo.isInstanceOf[ErrorP2Repository])
+    Assert.assertTrue("Error downloading contents: " + maybeRepo, maybeRepo.isInstanceOf[ErrorP2RepositoryOld])
   }
 
 }

@@ -112,26 +112,26 @@ h4 {margin: 0.2em 0 0 0; margin-right: 3em;}
       <span class="red">- not rebuilt</span>
   }
 
-  def availableScalaIDEVersions(repo: P2Repository, scalaIDEVersions: Seq[ScalaIDEVersion]) = {
+  def availableScalaIDEVersions(repo: P2RepositoryOld, scalaIDEVersions: Seq[ScalaIDEVersion]) = {
     repo match {
-      case p: ValidP2Repository =>
+      case p: ValidP2RepositoryOld =>
         <div class="availableScalaIDEVersions">
           <h3>{ repo.location }:</h3>
           { scalaIDEVersions.map(s => <div class="scalaIDEVersion">{ s.version }</div>) }
         </div>
-      case e: ErrorP2Repository =>
+      case e: ErrorP2RepositoryOld =>
         <div class="availableScalaIDEVersions notAvailable"><h3>{ repo.location }:</h3><div>Not available.</div></div>
     }
   }
 
-  def existingAddOns(repo: P2Repository, addOns: Map[PluginDescriptor, Seq[AddOn]]) = {
+  def existingAddOns(repo: P2RepositoryOld, addOns: Map[PluginDescriptor, Seq[AddOn]]) = {
     repo match {
-      case p: ValidP2Repository =>
+      case p: ValidP2RepositoryOld =>
         <div class="existingAddOns">
           <h3>{ repo.location }:</h3>
           { availableAddOns(addOns) }
         </div>
-      case e: ErrorP2Repository =>
+      case e: ErrorP2RepositoryOld =>
         <div class="existingAddOns notAvailable"><h3>{ repo.location }:</h3><div>Not available.</div></div>
     }
   }

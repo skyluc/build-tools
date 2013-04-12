@@ -44,7 +44,7 @@ object EcosystemBuildsMavenProjects {
     Seq(siteFolder, nextFolder).flatten
   }
 
-  def generateEcosystemProject(scalaIDEVersions: Seq[org.scalaide.buildtools.ScalaIDEVersion], tag: String, baseRepository: P2Repository, buildFolder: File, zippedVersion: Option[ScalaIDEVersion]): List[File] = {
+  def generateEcosystemProject(scalaIDEVersions: Seq[org.scalaide.buildtools.ScalaIDEVersion], tag: String, baseRepository: P2RepositoryOld, buildFolder: File, zippedVersion: Option[ScalaIDEVersion]): List[File] = {
     val siteFolder = new File(buildFolder, tag)
     siteFolder.mkdirs()
 
@@ -128,7 +128,7 @@ object EcosystemBuildsMavenProjects {
     </project>
   }
 
-  def createEcosystemPomXml(artifactId: String, baseRepository: P2Repository, featureFolders: Seq[File], buildFolder: File) = {
+  def createEcosystemPomXml(artifactId: String, baseRepository: P2RepositoryOld, featureFolders: Seq[File], buildFolder: File) = {
     <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <modelVersion>4.0.0</modelVersion>
       <prerequisites>

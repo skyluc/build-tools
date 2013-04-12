@@ -5,6 +5,7 @@ import java.io.FileWriter
 import scala.io.Source
 import scala.util.matching.Regex
 import org.osgi.framework.Version
+import org.osgi.framework.VersionRange
 
 object Ecosystem {
 
@@ -36,9 +37,9 @@ object Ecosystem {
   val RootOption = "--root=(.*)".r
 
   val RangeRegex = """[\[\(]([^,]*),([^\]\)]*)[\]\)]""".r
-  
+
   val UndefinedVersion = new Version(0, 0, 0)
-  
+
   /** regex to find the given bundle id dependency in a manifest file */
   def idInManifest(id: String) = ("(.*" + id + ")(,?.*)").r
   /** regex to find the given bundle id dependency, with a version number defined, in a manifest file */
@@ -99,12 +100,17 @@ object Ecosystem {
     def apply(range: String): Option[EclipseVersion] = {
       range match {
         case RangeRegex(low, high) =>
-          val v = new Version(low)
-          if (v.getMajor() == 3 && v.getMinor() < 8) {
-            Some(EclipseIndigo)
-          } else {
-            Some(EclipseJuno)
-          }
+          Some(translate(new Version(low)))
+      }
+    }
+
+    def apply(range: VersionRange): EclipseVersion = translate(range.getLeft())
+
+    private def translate(version: Version): EclipseVersion = {
+      if (version.getMajor() == 3 && version.getMinor() < 8) {
+        EclipseIndigo
+      } else {
+        EclipseJuno
       }
     }
   }
@@ -122,6 +128,13 @@ object Ecosystem {
       case _ =>
         UndefinedVersion
     }
+  }
+
+  def findStrictVersion(range: VersionRange): Version = {
+    if (range.getLeft() == range.getRight())
+      range.getLeft()
+    else
+      UndefinedVersion
   }
 
 }

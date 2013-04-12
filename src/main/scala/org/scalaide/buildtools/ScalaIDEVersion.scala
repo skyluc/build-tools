@@ -5,7 +5,7 @@ import Ecosystem._
 
 object ScalaIDEVersion {
 
-  def apply(iu: InstallableUnit, repository: P2Repository, existingAddOns: Map[PluginDescriptor, Seq[AddOn]], availableAddOns: Map[PluginDescriptor, Seq[AddOn]], siteRepo: P2Repository): ScalaIDEVersion = {
+  def apply(iu: InstallableUnitOld, repository: P2RepositoryOld, existingAddOns: Map[PluginDescriptor, Seq[AddOn]], availableAddOns: Map[PluginDescriptor, Seq[AddOn]], siteRepo: P2RepositoryOld): ScalaIDEVersion = {
     val (associatedExistingAddOns, associatedAvailableAddOns) = latestAssociated(availableAddOns, iu.version).foldLeft(latestAssociated(existingAddOns, iu.version)) {
       (acc, availableAddOn) =>
         acc.get(availableAddOn._1) match {
@@ -56,7 +56,7 @@ object ScalaIDEVersion {
   }
 }
 
-case class ScalaIDEVersion private (iu: InstallableUnit, repository: P2Repository, scalaVersion: Version, eclipseVersion: EclipseVersion, associatedExistingAddOns: Map[PluginDescriptor, AddOn], associatedAvailableAddOns: Map[PluginDescriptor, AddOn]) {
+case class ScalaIDEVersion private (iu: InstallableUnitOld, repository: P2RepositoryOld, scalaVersion: Version, eclipseVersion: EclipseVersion, associatedExistingAddOns: Map[PluginDescriptor, AddOn], associatedAvailableAddOns: Map[PluginDescriptor, AddOn]) {
 
   def version = iu.version
 
