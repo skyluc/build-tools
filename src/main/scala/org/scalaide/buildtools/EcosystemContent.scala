@@ -4,6 +4,7 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 import Ecosystem._
 import org.osgi.framework.Version
+import scala.annotation.tailrec
 
 object EcosystemContent {
   import ExecutionContext.Implicits.global
@@ -48,13 +49,18 @@ object EcosystemContent {
 
     val scalaIDEsInSite = scalaIDEsIn(scalaIDEVersionsInSite, featuresInSite)
     val scalaIDEsInNextSite = scalaIDEsIn(scalaIDEVersionsInNextSite, featuresInSite)
+    
+    val visibleFeatures= groupFeatures(featuresInSite, availableFeatures)
 
-    val scalaIDEsToBeInSite = scalaIDEsToBeIn(scalaIDEVersionsIn(baseRepository), featuresInSite, availableFeatures)
+    val scalaIDEsToBeInSite = scalaIDEsToBeIn(scalaIDEVersionsIn(baseRepository), visibleFeatures)
+    val scalaIDEsToBeInNextSite = scalaIDEsToBeIn(scalaIDEVersionsIn(nextBaseRepository), visibleFeatures)
 
     for {
       inSite <- scalaIDEsInSite
       inNextSite <- scalaIDEsInNextSite
-    } yield EcosystemContent(configuration.id, inSite, inNextSite)
+      toBeInSite <- scalaIDEsToBeInSite
+      toBeInNextSite <- scalaIDEsInNextSite
+    } yield EcosystemContent(configuration.id, inSite, inNextSite, toBeInSite, toBeInNextSite)
   }
 
   private def scalaIDEVersionsIn(repository: Future[P2Repository]): Future[Set[ScalaIDEVersions]] =
@@ -118,15 +124,37 @@ object EcosystemContent {
 
     Feature(iu, repository, scalaIDEVersion, scalaVersion)
   }
+  
+  private def groupFeatures(existingFeatures: Future[Map[PluginDescriptor, Seq[Feature]]], availableFeatures: Future[Map[PluginDescriptor, Seq[Feature]]]): Future[Seq[(Seq[Feature], Seq[Feature])]] = {
+    @tailrec
+    def group(existing: List[(PluginDescriptor, Seq[Feature])], available: Map[PluginDescriptor, Seq[Feature]], acc: Seq[(Seq[Feature], Seq[Feature])]): Seq[(Seq[Feature], Seq[Feature])] = {
+      existing match {
+        case (descriptor, existingFeatures) :: tail =>
+          available.get(descriptor) match {
+            case Some(availableFeatures) =>
+              group(tail, available - descriptor, acc :+ ((existingFeatures, availableFeatures)))
+            case None =>
+              group(tail, available, acc :+ ((existingFeatures, Seq())))
+          }
+        case _ =>
+          acc ++ available.values.map(s => ((Seq(), s)))
+      }
+    }
+    
+    for {
+      existing <- existingFeatures
+      availableFeatures <- availableFeatures
+    } yield group(existing.toList, availableFeatures, Seq())
+  }
 
-  private def featuresIn(repository: Future[P2Repository], featureConfigurations: Seq[PluginDescriptor]): Future[Map[PluginDescriptor, Set[Feature]]] = {
+  private def featuresIn(repository: Future[P2Repository], featureConfigurations: Seq[PluginDescriptor]): Future[Map[PluginDescriptor, Seq[Feature]]] = {
     repository map {
       repo =>
-        featureConfigurations.map(desc => (desc, repo.findIU(desc.featureId).map(extractFeature(_, repo)))).toMap
+        featureConfigurations.map(desc => (desc, repo.findIU(desc.featureId).map(extractFeature(_, repo)).toSeq)).toMap
     }
   }
 
-  private def scalaIDEsIn(scalaIDEVersions: Future[Set[ScalaIDEVersions]], existingFeatures: Future[Map[PluginDescriptor, Set[Feature]]]) = {
+  private def scalaIDEsIn(scalaIDEVersions: Future[Set[ScalaIDEVersions]], existingFeatures: Future[Map[PluginDescriptor, Seq[Feature]]]) = {
 
     for {
       versions <- scalaIDEVersions
@@ -141,17 +169,15 @@ object EcosystemContent {
 
   }
   
-  private def scalaIDEsToBeIn(scalaIDEVersions: Future[Set[ScalaIDEVersions]], existingFeatures: Future[Map[PluginDescriptor, Seq[Feature]]], availableFeatures: Future[Map[PluginDescriptor, Seq[Feature]]]) = {
+  private def scalaIDEsToBeIn(scalaIDEVersions: Future[Set[ScalaIDEVersions]], visibleFeatures: Future[Seq[(Seq[Feature], Seq[Feature])]]): Future[Set[ScalaIDE]] = {
     
     for {
       versions <- scalaIDEVersions
-      existing <- existingFeatures
-      available <- availableFeatures
+      visible <- visibleFeatures
     } yield {
       versions.map {
         v =>
-          val (existingForVersion, availableForVersion) = filterFeaturesFor(v, existing, available)
-          ScalaIDE(v.iu, v.repository, v.scalaVersion, v.eclipseVersion, existing.flatMap(_._2).filter(p => true).toSeq, available.flatMap(_._2).filter(p => true).toSeq)
+          ???
       }
     }
     
@@ -159,9 +185,11 @@ object EcosystemContent {
   
   private def filterFeaturesFor(version: ScalaIDEVersions, existing: Map[PluginDescriptor, Seq[Feature]], available: Map[PluginDescriptor, Seq[Feature]]): (Seq[Feature], Seq[Feature]) = {
     
+    def filter(existing: List[(PluginDescriptor, Seq[Feature])], available: Map[PluginDescriptor, Seq[Feature]], accExisting: Seq[Feature], accAvailable: Seq[Feature]): (Seq[Feature], Seq[Feature]) = {
+      ???
+    }
     
-    
-    ???
+    filter(existing.toList, available, Seq(), Seq())
   }
 
   private case class ScalaIDEVersions(iu: InstallableUnit, repository: P2Repository, scalaVersion: Version, eclipseVersion: EclipseVersion)
@@ -171,4 +199,5 @@ case class ScalaIDE(iu: InstallableUnit, repository: P2Repository, scalaVersion:
 
 case class Feature(iu: InstallableUnit, repository: P2Repository, scalaIDEVersion: Option[Version], scalaVersion: Version)
 
-case class EcosystemContent(id: String, scalaIDEsInSite: Set[ScalaIDE], scalaIDEsInNextSite: Set[ScalaIDE])
+case class EcosystemContent(id: String, scalaIDEsInSite: Set[ScalaIDE], scalaIDEsInNextSite: Set[ScalaIDE], scalaIDEsToBeInSite: Set[ScalaIDE], scalaIDEsToBeInNextSite: Set[ScalaIDE])
+
