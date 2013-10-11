@@ -1,0 +1,445 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?metadataRepository version='1.1.0'?>
+<repository name='' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
+  <properties size='2'>
+    <property name='p2.timestamp' value='1381328736757'/>
+    <property name='p2.compressed' value='true'/>
+  </properties>
+
+  <units size='163'>
+    <unit id='org.scala-lang.scala-library' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d' singleton='false'>
+      <update id='org.scala-lang.scala-library' range='[0.0.0,2.10.3.v20130923-060037-VFINAL-e2fec6b28d)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='Scala Library for Eclipse'/>
+        <property name='org.eclipse.equinox.p2.description' value='Bundle containing the Scala library'/>
+        <property name='org.eclipse.equinox.p2.provider' value='scala-ide.org'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://scala-ide.org'/>
+      </properties>
+      <provides size='71'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.scala-lang.scala-library' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='osgi.bundle' name='org.scala-lang.scala-library' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.sys.process' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.annotation.unchecked' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.concurrent.duration' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.xml.persistent' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.concurrent' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.actors.threadpool' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.parsing.combinator.testing' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.beans' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.annotation' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.annotation.meta' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.concurrent.forkjoin' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.io' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.automata' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.ref' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.matching' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.parsing.combinator' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.compat' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.runtime' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.parsing.ast' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.logging' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.parsing.json' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.xml.dtd' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.parsing.combinator.token' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.parsing.input' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.testing' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.grammar' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.collection.immutable' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.collection' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.text' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.swing' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.actors.scheduler' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.actors' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.continuations' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.collection.convert' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.swing.event' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.hashing' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.collection.parallel' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.xml.include' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.math' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.collection.script' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.swing.model' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.control' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.macros.internal' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.actors.threadpool.helpers' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.xml.parsing' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.annotation.target' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.collection.parallel.immutable' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.sys' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.xml' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.parallel' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.collection.concurrent' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.actors.remote' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.collection.mutable' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.actors.threadpool.locks' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.regexp' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.collection.parallel.mutable' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.xml.include.sax' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.xml.factory' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.xml.transform' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.parsing.combinator.lexical' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.util.parsing.combinator.syntactical' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.xml.pull' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.concurrent.impl' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.concurrent.util' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.collection.generic' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='10'>
+        <required namespace='java.package' name='javax.swing' range='0.0.0'/>
+        <required namespace='java.package' name='javax.swing.border' range='0.0.0'/>
+        <required namespace='java.package' name='javax.swing.event' range='0.0.0'/>
+        <required namespace='java.package' name='javax.swing.filechooser' range='0.0.0'/>
+        <required namespace='java.package' name='javax.swing.table' range='0.0.0'/>
+        <required namespace='java.package' name='javax.swing.text' range='0.0.0'/>
+        <required namespace='java.package' name='javax.xml.parsers' range='0.0.0'/>
+        <required namespace='java.package' name='org.xml.sax' range='0.0.0'/>
+        <required namespace='java.package' name='org.xml.sax.ext' range='0.0.0'/>
+        <required namespace='java.package' name='org.xml.sax.helpers' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.scala-lang.scala-library' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.scala-lang.scala-library&#xA;Bundle-Version: 2.10.3.v20130923-060037-VFINAL-e2fec6b28d
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.scala-lang.scala-compiler' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d' singleton='false'>
+      <update id='org.scala-lang.scala-compiler' range='[0.0.0,2.10.3.v20130923-060037-VFINAL-e2fec6b28d)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='Scala Compiler for Eclipse'/>
+        <property name='org.eclipse.equinox.p2.description' value='The Scala Toolchain for Scala Eclipse plugins'/>
+        <property name='org.eclipse.equinox.p2.provider' value='scala-ide.org'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://scala-ide.org'/>
+      </properties>
+      <provides size='75'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.scala-lang.scala-compiler' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='osgi.bundle' name='org.scala-lang.scala-compiler' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.internal' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.internal.transform' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.internal.settings' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.internal.annotations' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.internal.util' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.internal.pickling' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.reify' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.runtime' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.macros' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.api' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.macros.util' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.io' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.macros.runtime' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.reify.utils' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.reify.codegen' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.reflect.reify.phases' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.doc.model.diagram' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.ant.templates' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.ant' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.symtab.clr' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.reporters' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.doc.html.page' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.ant.sabbus' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.asm.tree.analysis' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.asm.util' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.interactive.tests' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.doc.model' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.backend' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.backend.opt' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.settings' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.dependencies' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.backend.msil' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.asm.tree' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.interactive' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.cmd' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.plugins' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.util' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.scratchpad' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.transform' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.doc.html.page.diagram' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.doc' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.symtab.classfile' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.interpreter' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.reflect' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.util' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.io' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.javac' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.typechecker' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.doc.base' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.ast' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.interpreter.session' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.transform.patmat' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.backend.jvm' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.symtab' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.ast.parser' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.asm.signature' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.doc.html' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.backend.icode' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.backend.icode.analysis' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.doc.base.comment' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.doc.html.resource.lib' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.cmd.gen' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.matching' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.doc.doclet' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.nsc.interactive.tests.core' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='scala.tools.asm' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='ch.epfl.lamp.fjbg' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='ch.epfl.lamp.util' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='ch.epfl.lamp.compiler.msil.emit' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='ch.epfl.lamp.compiler.msil.util' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='java.package' name='ch.epfl.lamp.compiler.msil' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='43'>
+        <required namespace='java.package' name='javax.swing' range='0.0.0'/>
+        <required namespace='java.package' name='javax.swing.border' range='0.0.0'/>
+        <required namespace='java.package' name='javax.swing.event' range='0.0.0'/>
+        <required namespace='java.package' name='javax.swing.tree' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.tools.ant' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.tools.ant.taskdefs' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.tools.ant.types' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.tools.ant.util' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.tools.ant.util.facade' range='0.0.0'/>
+        <required namespace='java.package' name='scala' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.annotation' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.annotation.meta' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.annotation.unchecked' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.beans' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.collection' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.collection.convert' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.collection.generic' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.collection.immutable' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.collection.mutable' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.collection.parallel' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.collection.parallel.mutable' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.collection.script' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.compat' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.concurrent' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.io' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.math' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.ref' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.reflect' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.reflect.macros.internal' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.runtime' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.sys' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.sys.process' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.text' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.util' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.util.control' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.util.hashing' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.util.matching' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.util.parsing.combinator' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.util.parsing.input' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.util.parsing.json' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.xml' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.xml.dtd' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+        <required namespace='java.package' name='scala.xml.parsing' range='[2.10.0,3.0.0)' optional='true' greedy='false'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.scala-lang.scala-compiler' version='2.10.3.v20130923-060037-VFINAL-e2fec6b28d'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.scala-lang.scala-compiler&#xA;Bundle-Version: 2.10.3.v20130923-060037-VFINAL-e2fec6b28d
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.scala-ide.sdt.core' version='3.0.2.rc02-2_10-201310081317-0880865'>
+      <update id='org.scala-ide.sdt.core' range='[0.0.0,3.0.2.rc02-2_10-201310081317-0880865)' severity='0'/>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='Scala Plugin'/>
+        <property name='org.eclipse.equinox.p2.provider' value='scala-ide.org'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='48'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.scala-ide.sdt.core' version='3.0.2.rc02-2_10-201310081317-0880865'/>
+        <provided namespace='osgi.bundle' name='org.scala-ide.sdt.core' version='3.0.2.rc02-2_10-201310081317-0880865'/>
+        <provided namespace='java.package' name='scala.tools.eclipse' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.actions' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.buildmanager' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.buildmanager.refined' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.buildmanager.sbtintegration' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.completion' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.diagnostic' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.formatter' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.hyperlink.text' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.hyperlink.text.detector' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.interpreter' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.javaelements' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.jcompiler' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.jface.text' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.launching' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.lexical' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.logging' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.logging.log4j' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.logging.ui.properties' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.markoccurrences' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.properties' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.properties.syntaxcolouring' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.quickfix' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.reconciliation' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.refactoring' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.refactoring.method' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.refactoring.method.ui' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.refactoring.move' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.refactoring.rename' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.refactoring.source' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.refactoring.source.ui' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.refactoring.ui' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.resources' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.semantic' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.semantichighlighting' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.semantichighlighting.classifier' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.semantichighlighting.implicits' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.semantichighlighting.ui' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.semicolon' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.sourcefileprovider' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.templates' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.ui' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.ui.actions' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.util' version='0.0.0'/>
+        <provided namespace='java.package' name='scala.tools.eclipse.wizards' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='54'>
+        <required namespace='osgi.bundle' name='org.eclipse.core.expressions' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.filesystem' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.help' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.core' range='[3.8.0,4.0.0)'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.core.manipulation' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.debug' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.debug.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.junit' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.launching' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ltk.core.refactoring' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ltk.ui.refactoring' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.search' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.text' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.console' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.forms' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.navigator' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.navigator.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.views' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.pde.core' range='0.0.0' optional='true' greedy='false'/>
+        <required namespace='osgi.bundle' name='org.eclipse.pde.ui' range='0.0.0' optional='true' greedy='false'/>
+        <required namespace='osgi.bundle' name='org.scala-lang.scala-library' range='[2.10.3.v20130923-060037-VFINAL-e2fec6b28d,2.10.3.v20130923-060037-VFINAL-e2fec6b28d]'/>
+        <required namespace='osgi.bundle' name='org.scala-lang.scala-compiler' range='[2.10.3.v20130923-060037-VFINAL-e2fec6b28d,2.10.3.v20130923-060037-VFINAL-e2fec6b28d]'/>
+        <required namespace='osgi.bundle' name='org.scala-refactoring.library' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.scala-ide.sbt.full.library' range='[0.13.0,0.14.0)'/>
+        <required namespace='osgi.bundle' name='scalariform' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.browser' range='3.3.0'/>
+        <required namespace='java.package' name='com.ibm.icu.text' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.builderoptions' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.cfprovider' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.configuration' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.core' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.cuprovider' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.hierarchy' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.imagedescriptor' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.indexerprovider' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.jcompiler' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.launching' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.search' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.spellingengineprovider' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.ui' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.ui.actions' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.ui.javaeditor' range='0.0.0'/>
+        <required namespace='java.package' name='scala.tools.eclipse.contribution.weaving.jdt.ui.javaeditor.formatter' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.scala-ide.sdt.core' version='3.0.2.rc02-2_10-201310081317-0880865'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.scala-ide.sdt.core;singleton:=true&#xA;Bundle-Version: 3.0.2.rc02-2_10-201310081317-0880865
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.scala-ide.sdt.feature.feature.group' version='3.0.2.rc02-2_10-201310081317-0880865' singleton='false'>
+      <update id='org.scala-ide.sdt.feature.feature.group' range='[0.0.0,3.0.2.rc02-2_10-201310081317-0880865)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='Scala IDE for Eclipse'/>
+        <property name='org.eclipse.equinox.p2.description' value='The Scala IDE for Eclipse provides the tools needed to&#xA;to build Scala programs on the Eclipse Platform.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://scala-ide.org/'/>
+        <property name='org.eclipse.equinox.p2.provider' value='scala-ide.org'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+      </properties>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.scala-ide.sdt.feature.feature.group' version='3.0.2.rc02-2_10-201310081317-0880865'/>
+      </provides>
+      <requires size='34'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jdt.ui' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.scala-lang.scala-library' range='[2.10.3.v20130923-060037-VFINAL-e2fec6b28d,2.10.3.v20130923-060037-VFINAL-e2fec6b28d]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ant' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.navigator' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.navigator.resources' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.debug.ui' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jdt.debug.ui' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.scala-refactoring.library' range='[0.6.2.2_10-201310081309-3340a5d,0.6.2.2_10-201310081309-3340a5d]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.scala-ide.sdt.feature.feature.jar' range='[3.0.2.rc02-2_10-201310081317-0880865,3.0.2.rc02-2_10-201310081317-0880865]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.scala-ide.sbt.full.library' range='[0.13.0.rc02-2_10-20131008-1514,0.13.0.rc02-2_10-20131008-1514]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.scala-lang.scala-compiler' range='[2.10.3.v20130923-060037-VFINAL-e2fec6b28d,2.10.3.v20130923-060037-VFINAL-e2fec6b28d]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.debug.core' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.views' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.console' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.forms' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='scalariform' range='[0.1.5.201310081514-1e13150,0.1.5.201310081514-1e13150]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jdt.core' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='configure.org.eclipse.equinox.weaving.aspectj' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jdt.launching' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.search' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.scala-ide.sdt.debug' range='[3.0.2.rc02-2_10-201310081317-0880865,3.0.2.rc02-2_10-201310081317-0880865]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.equinox.weaving.aspectj' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.scala-ide.sdt.weaving.feature.feature.group' range='[3.0.2.rc02-2_10-201310081317-0880865,3.0.2.rc02-2_10-201310081317-0880865]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.scala-ide.sdt.core' range='[3.0.2.rc02-2_10-201310081317-0880865,3.0.2.rc02-2_10-201310081317-0880865]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.text' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.filesystem' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jdt.debug' range='0.0.0'/>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license uri='http://scala-lang.org/downloads/license.html' url='http://scala-lang.org/downloads/license.html'>
+          SCALA LICENSE&#xA;&#xA;Copyright (c) 2002-2010 EPFL, Lausanne, unless otherwise specified.&#xA;All rights reserved.&#xA;&#xA;This software was developed by the Programming Methods Laboratory of the&#xA;Swiss Federal Institute of Technology (EPFL), Lausanne, Switzerland.&#xA;&#xA;Permission to use, copy, modify, and distribute this software in source&#xA;or binary form for any purpose with or without fee is hereby granted,&#xA;provided that the following conditions are met:&#xA;&#xA;   1. Redistributions of source code must retain the above copyright&#xA;      notice, this list of conditions and the following disclaimer.&#xA;&#xA;   2. Redistributions in binary form must reproduce the above copyright&#xA;      notice, this list of conditions and the following disclaimer in the&#xA;      documentation and/or other materials provided with the distribution.&#xA;&#xA;   3. Neither the name of the EPFL nor the names of its contributors&#xA;      may be used to endorse or promote products derived from this&#xA;      software without specific prior written permission.&#xA;&#xA;&#xA;THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS&apos;&apos; AND&#xA;ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&#xA;IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&#xA;ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE&#xA;FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&#xA;DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&#xA;SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&#xA;CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&#xA;LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&#xA;OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&#xA;SUCH DAMAGE.
+        </license>
+      </licenses>
+      <copyright uri='http://scala-lang.org/downloads/' url='http://scala-lang.org/downloads/'>
+        Copyright (c) 2002-2010 EPFL, Lausanne.&#xA;All rights reserved.
+      </copyright>
+    </unit>
+  </units>
+</repository>
