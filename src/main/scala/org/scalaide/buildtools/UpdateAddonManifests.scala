@@ -17,7 +17,7 @@ object UpdateAddonManifests {
     // parse arguments
 
     val (repoURL, rootFolder) = args.toList match {
-      case RootOption(_) :: Nil | Nil => 
+      case RootOption(_) :: Nil | Nil =>
         Console.err.println(usage)
         Console.err.println("ERROR: missing repository URL")
         System.exit(1).asInstanceOf[Nothing]
@@ -26,18 +26,23 @@ object UpdateAddonManifests {
       case url :: _ =>
         (url, System.getProperty("user.dir"))
     }
-    
-    // does the job
-    val result = new UpdateAddonManifests(repoURL, rootFolder)()
 
-    // check the result
-    for {
-      error <- result.left
-    } {
-      Console.err.println("ERROR: %s".format(error))
-      System.exit(2)
+    try {
+      // does the job
+      val result = new UpdateAddonManifests(repoURL, rootFolder)()
+
+      // check the result
+      for {
+        error <- result.left
+      } {
+        Console.err.println("ERROR: %s".format(error))
+        System.exit(2)
+      }
+
+    } finally {
+      // need to stop Dispatch in any cases
+      Http.shutdown()
     }
-
   }
 
 }
@@ -47,15 +52,13 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
   import Ecosystem._
 
   def apply(): Either[String, String] = {
-    val res= P2Repository.fromUrl(repoURL) match {
+    val res = P2Repository.fromUrl(repoURL) match {
       case r: ValidP2Repository =>
         updateVersions(r)
       case ErrorP2Repository(msg, _) =>
         Left(msg)
     }
-    
-    // need to stop Dispatch in any cases
-    Http.shutdown()
+
     res
   }
 
@@ -67,8 +70,8 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
     for {
       scalaIDEVersion <- getOneVersion(p2Repo, ScalaIDEId).right
       // TODO: the version should be the one scalaIDE depends on
-      scalaLibraryVersion <- getOneVersion(p2Repo, ScalaLibraryId).right
-      scalaCompilerVersion <- getOneVersion(p2Repo, ScalaCompilerId).right
+      scalaLibraryVersion <- getOneVersion(p2Repo, ScalaLangLibraryId).right
+      scalaCompilerVersion <- getOneVersion(p2Repo, ScalaLangCompilerId).right
       scalaIDEFeatureVersion <- getOneVersion(p2Repo, ScalaIDEFeatureIdOsgi).right
       result <- updateVersions(scalaIDEVersion, scalaLibraryVersion, scalaCompilerVersion, scalaIDEFeatureVersion).right
     } yield result
@@ -83,36 +86,35 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
 
     val root = new File(rootFolder)
 
-
     if (root.exists && root.isDirectory) {
       // update the plugin manifest files
-      val versionUpdater: PartialFunction[String, String] = updateVersionInManifest(ScalaLibraryId, scalaLibraryVersion).
-          orElse(updateVersionInManifest(ScalaCompilerId, scalaCompilerVersion)).
-          orElse(updateVersionInManifest(ScalaIDEId, scalaIDEVersion)).
-          orElse {
+      val versionUpdater: PartialFunction[String, String] = updateVersionInManifest(ScalaLangLibraryId, scalaLibraryVersion).
+        orElse(updateVersionInManifest(ScalaLangCompilerId, scalaCompilerVersion)).
+        orElse(updateVersionInManifest(ScalaIDEId, scalaIDEVersion)).
+        orElse {
           case line =>
-          line
-      }
+            line
+        }
       findPlugins(root).foreach(updateVersionInPluginManifest(_, versionUpdater))
-      
+
       // update the feature definition files
       findFeatures(root).foreach(updateVersionInFeature(_, scalaIDEFeatureVersion))
-      
+
       Right("OK")
     } else {
       Left("%s doesn't exist or is not a directory".format(root.getAbsolutePath()))
     }
   }
-  
+
   /**
    * Set strict version dependency to the Scala IDE plugin in the given manifest file.
    */
   private def updateVersionInPluginManifest(manifest: File, versionUpdater: PartialFunction[String, String]) {
     println(manifest.getAbsoluteFile())
-    
+
     updateBundleManifest(manifest, versionUpdater)
   }
-  
+
   /**
    * Go through the feature definition XML tree, and add version and match attribute for the reference to the scala IDE feature.
    */
@@ -126,23 +128,23 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
       }))
     }
   }
-  
+
   /**
    * Set strict version dependency to Scala IDE feature in the given feature file.
    */
   private def updateVersionInFeature(feature: File, scalaIDEFeatureVersion: Version): Either[String, String] = {
     println(feature.getAbsoluteFile())
-    
-    val savedFeature= new File(feature.getAbsolutePath() + OriginalSuffix)
-    
+
+    val savedFeature = new File(feature.getAbsolutePath() + OriginalSuffix)
+
     if (!savedFeature.exists) {
       FileUtils.copyFile(feature, savedFeature)
     }
-    
-    val xml= transformXML(XML.loadFile(savedFeature), scalaIDEFeatureVersion)
-    
+
+    val xml = transformXML(XML.loadFile(savedFeature), scalaIDEFeatureVersion)
+
     XML.save(feature.getAbsolutePath(), xml, "UTF-8", true)
-    
+
     Right("OK")
   }
 

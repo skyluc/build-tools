@@ -16,6 +16,8 @@ object Ecosystem {
   /* osgi ids of the relevant bundles */
   val ScalaLibraryId = "org.scala-ide.scala.library"
   val ScalaCompilerId = "org.scala-ide.scala.compiler"
+  val ScalaLangLibraryId = "org.scala-lang.scala-library"
+  val ScalaLangCompilerId = "org.scala-lang.scala-compiler"
   val ScalaIDEId = "org.scala-ide.sdt.core"
   val ScalaIDEFeatureId = "org.scala-ide.sdt.feature"
   val ScalaIDESourceFeatureId = "org.scala-ide.sdt.source.feature"

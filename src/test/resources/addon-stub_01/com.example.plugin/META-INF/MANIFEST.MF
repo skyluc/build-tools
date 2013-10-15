@@ -1,0 +1,40 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: stub 1
+Bundle-SymbolicName: com.example.plugin;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Scala IDE
+Bundle-ActivationPolicy: lazy
+Bundle-Localization: plugin
+Require-Bundle: 
+ org.eclipse.core.runtime,
+ org.eclipse.debug.ui,
+ org.eclipse.help,
+ org.eclipse.jdt.core;bundle-version="[3.8.0,4.4.0)",
+ org.eclipse.jdt.debug.ui,
+ org.eclipse.jdt.junit,
+ org.eclipse.jdt.launching,
+ org.eclipse.jdt.ui,
+ org.eclipse.jface.text,
+ org.eclipse.ui,
+ org.eclipse.ui.console,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.forms,
+ org.eclipse.ui.ide,
+ org.scala-lang.scala-library,
+ org.scala-lang.scala-compiler,
+ org.scala-ide.sdt.core,
+ org.eclipse.core.resources
+Import-Package: 
+ com.ibm.icu.text;apply-aspects:=false;org.eclipse.swt.graphics;apply-aspects:=false,
+ scala.tools.eclipse;apply-aspects:=false,
+ scala.tools.eclipse.contribution.weaving.jdt.ui.javaeditor.formatter;apply-aspects:=false
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ClassPath: .,
+ target/lib/sbt-rc-remote-controller.jar,
+ target/lib/sbt-rc-props.jar,
+ target/lib/akka-actor_2.10.jar,
+ target/lib/config.jar,
+ target/lib/io.jar,
+ target/lib/collections.jar
+Bundle-Activator: org.scalaide.sdt.sbtremote.SbtRemotePlugin
