@@ -41,7 +41,7 @@ object ScalaIDEVersion {
 
     // the version of Scala it depends on
     val scalaVersion =
-      sdtCore.dependencies.find(_.id == ScalaLibraryId)
+      sdtCore.dependencies.find(d => d.id == ScalaLibraryId  || d.id == ScalaLangLibraryId)
         .map(libDep => findStrictVersion(libDep.range))
         .getOrElse(throw new Exception("failed to find the Scala version for %s".format(iu)))
 
