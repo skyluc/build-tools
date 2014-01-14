@@ -66,4 +66,11 @@ object EcosystemsDescriptor {
   }
 }
 
-final case class EcosystemDescriptor(id: String, site: URL, base: URL, nextSite: URL, nextBase: URL)
+final case class EcosystemDescriptor(id: EcosystemId, site: URL, base: URL, nextSite: URL, nextBase: URL)
+object EcosystemDescriptor {
+  def apply(id: String, site: URL, base: URL, nextSite: URL, nextBase: URL): EcosystemDescriptor = 
+    new EcosystemDescriptor(EcosystemId(id), site, base, nextSite, nextBase)
+}
+case class EcosystemId(value: String) {
+  override def toString = value
+}

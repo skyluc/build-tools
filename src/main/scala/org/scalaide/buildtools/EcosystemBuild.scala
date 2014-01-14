@@ -6,7 +6,7 @@ object EcosystemBuild {
 
   import Ecosystem._
 
-  def apply(ecosystemConf: EcosystemDescriptor, availableAddOns: Map[PluginDescriptor, Seq[AddOn]], featureConfs: Seq[PluginDescriptor]): EcosystemBuild = {
+  def apply(ecosystemConf: EcosystemDescriptor, availableAddOns: Map[PluginDescriptor, Seq[AddOn]], featureConfs: Seq[PluginDescriptor], forceEcosystemCreation: Boolean): EcosystemBuild = {
 
     val siteRepo = Repositories(ecosystemConf.site)
     val nextSiteRepo = Repositories(ecosystemConf.nextSite)
@@ -18,7 +18,7 @@ object EcosystemBuild {
     val nextBaseScalaIDEVersions = findScalaIDEVersions(nextBaseRepo, nextExistingAddOns, availableAddOns, nextSiteRepo, featureConfs)
     val nextSiteScalaIDEVersions = siteRepo.findIU(ScalaIDEFeatureIdOsgi)
 
-    EcosystemBuild(
+    val res = EcosystemBuild(
       ecosystemConf.id,
       baseRepo,
       baseScalaIDEVersions,
@@ -28,8 +28,10 @@ object EcosystemBuild {
       nextSiteRepo,
       existingAddOns,
       nextExistingAddOns,
-      shouldBeRegenerated(baseScalaIDEVersions, siteRepo.findIU(ScalaIDEFeatureIdOsgi)),
-      shouldBeRegenerated(nextBaseScalaIDEVersions, nextSiteRepo.findIU(ScalaIDEFeatureIdOsgi)))
+      // the ecosystem creation can be forced via the --force=<ecosystemId> CLI argument
+      forceEcosystemCreation || shouldBeRegenerated(baseScalaIDEVersions, siteRepo.findIU(ScalaIDEFeatureIdOsgi)),
+      forceEcosystemCreation || shouldBeRegenerated(nextBaseScalaIDEVersions, nextSiteRepo.findIU(ScalaIDEFeatureIdOsgi)))
+    res
   }
 
   private def findScalaIDEVersions(baseRepo: P2Repository, existingAddOns: Map[PluginDescriptor, Seq[AddOn]], availableAddOns: Map[PluginDescriptor, Seq[AddOn]], siteRepo: P2Repository, featureConfs: Seq[PluginDescriptor]): Seq[ScalaIDEVersion] = {
@@ -49,7 +51,7 @@ object EcosystemBuild {
 }
 
 case class EcosystemBuild(
-  id: String,
+  id: EcosystemId,
   baseRepo: P2Repository,
   baseScalaIDEVersions: Seq[ScalaIDEVersion],
   nextBaseRepo: P2Repository,
@@ -58,8 +60,8 @@ case class EcosystemBuild(
   nextSiteRepo: P2Repository,
   existingAddOns: Map[PluginDescriptor, Seq[AddOn]],
   nextExistingAddOns: Map[PluginDescriptor, Seq[AddOn]],
-  val regenerateEcosystem: Boolean,
-  val regenerateNextEcosystem: Boolean) {
+  regenerateEcosystem: Boolean,
+  regenerateNextEcosystem: Boolean) {
 
   val zippedVersion: Option[ScalaIDEVersion] = baseScalaIDEVersions.sortBy(_.version).lastOption
 }
