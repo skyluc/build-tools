@@ -28,9 +28,8 @@ object EcosystemBuild {
       nextSiteRepo,
       existingAddOns,
       nextExistingAddOns,
-      // the ecosystem creation can be forced via the --force=<ecosystemId> CLI argument
-      forceEcosystemCreation || shouldBeRegenerated(baseScalaIDEVersions, siteRepo.findIU(ScalaIDEFeatureIdOsgi)),
-      forceEcosystemCreation || shouldBeRegenerated(nextBaseScalaIDEVersions, nextSiteRepo.findIU(ScalaIDEFeatureIdOsgi)))
+      shouldBeRegenerated(baseScalaIDEVersions, siteRepo.findIU(ScalaIDEFeatureIdOsgi), forceEcosystemCreation),
+      shouldBeRegenerated(nextBaseScalaIDEVersions, nextSiteRepo.findIU(ScalaIDEFeatureIdOsgi), forceEcosystemCreation))
     res
   }
 
@@ -38,14 +37,16 @@ object EcosystemBuild {
     baseRepo.findIU(ScalaIDEFeatureIdOsgi).toSeq.map(ScalaIDEVersion(_, baseRepo, existingAddOns, availableAddOns, siteRepo))
   }
 
-  private def shouldBeRegenerated(baseScalaIDEVersions: Seq[ScalaIDEVersion], siteScalaIDEVersions: Set[InstallableUnit]): Boolean = {
-    if (!baseScalaIDEVersions.forall(_.associatedAvailableAddOns.isEmpty)) {
-      true
-    } else {
+  // the ecosystem creation can be forced via the --force=<ecosystemId> CLI argument
+  private def shouldBeRegenerated(baseScalaIDEVersions: Seq[ScalaIDEVersion], siteScalaIDEVersions: Set[InstallableUnit], forceEcosystemCreation: Boolean): Boolean = {
+    val forceRebuild = forceEcosystemCreation && !baseScalaIDEVersions.isEmpty // force rebuild only if there is anything to build
+    val newAvailableAddOns = baseScalaIDEVersions.exists(!_.associatedAvailableAddOns.isEmpty)
+    val scalaIDEVersionsChanged = {
       val baseVersions: Set[Version] = baseScalaIDEVersions.map(_.version).toSet
       val siteVersions: Set[Version] = siteScalaIDEVersions.map(_.version).toSet
       baseVersions != siteVersions
     }
+    forceRebuild || newAvailableAddOns || scalaIDEVersionsChanged
   }
 
 }
