@@ -24,7 +24,7 @@ object MergeBasesBuildsMavenProjects {
 
   private def generateEcosystemProject(build: MergeBasesBuild, buildFolder: File): Option[File] = {
     if (build.toMerge) {
-      val ecosystemFolder = new File(buildFolder, build.id)
+      val ecosystemFolder = new File(buildFolder, build.id.value)
       ecosystemFolder.mkdirs()
 
       FileUtils.saveXml(new File(ecosystemFolder, "pom.xml"), createEcosystemPomXml(build))

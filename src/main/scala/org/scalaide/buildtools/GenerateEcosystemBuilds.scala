@@ -8,6 +8,11 @@ object GenerateEcosystemBuilds {
 
   import Ecosystem._
 
+  /* Regular expression for splitting a list of comma separated ecosystem ids provided via the --force argument.
+   * --force is used to force the recreation of the ecosystem update-site for the ids passed on the right-hand-side.  
+   */
+  private val ForceOption = "--force=([^,].+)".r
+
   def main(args: Array[String]) {
     // parse arguments
 
@@ -16,7 +21,13 @@ object GenerateEcosystemBuilds {
         root
     }.getOrElse(System.getProperty("user.dir"))
 
-    new GenerateEcosystemBuilds(new File(rootFolder))()
+    val forceEcosystemCreationIds: Set[EcosystemId] = args.collectFirst {
+      case ForceOption(forced) =>
+        forced.split(",").map(EcosystemId).toSet
+    }.getOrElse(Set.empty)
+    
+
+    new GenerateEcosystemBuilds(new File(rootFolder))(forceEcosystemCreationIds)
   }
 }
 
@@ -24,7 +35,7 @@ class GenerateEcosystemBuilds(rootFolder: File) {
 
   import Ecosystem._
 
-  def apply() {
+  def apply(forced: Set[EcosystemId]) {
     try {
       println("Generating ecosystem builds")
 
@@ -36,7 +47,7 @@ class GenerateEcosystemBuilds(rootFolder: File) {
           None
       })
 
-      val builds = EcosystemBuilds(ecosystemConfs, featureConfs)
+      val builds = EcosystemBuilds(forced, ecosystemConfs, featureConfs)
 
       val targetFolder = new File(rootFolder, "target")
       if (!targetFolder.exists()) {

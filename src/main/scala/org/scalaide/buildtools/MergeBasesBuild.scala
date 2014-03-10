@@ -23,7 +23,7 @@ object MergeBasesBuild {
 }
 
 case class MergeBasesBuild(
-  id: String,
+  id: EcosystemId,
   baseRepo: P2Repository,
   nextBaseRepo: P2Repository,
   toMerge: Boolean)

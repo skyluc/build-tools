@@ -27,7 +27,7 @@ object EcosystemBuildsMavenProjects {
   }
 
   def generateEcosystemProjects(ecosystemBuild: EcosystemBuild, buildFolder: File): Seq[File] = {
-    val ecosystemFolder = new File(buildFolder, ecosystemBuild.id)
+    val ecosystemFolder = new File(buildFolder, ecosystemBuild.id.value)
 
     val siteFolder = if (ecosystemBuild.regenerateEcosystem) {
       generateEcosystemProject(ecosystemBuild.baseScalaIDEVersions, "%s-base".format(ecosystemBuild.id), ecosystemBuild.baseRepo, buildFolder, ecosystemBuild.zippedVersion)

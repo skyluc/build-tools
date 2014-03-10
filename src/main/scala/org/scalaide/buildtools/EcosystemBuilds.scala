@@ -4,9 +4,10 @@ object EcosystemBuilds {
 
   import Ecosystem._
 
-  def apply(ecosystemConfs: Seq[EcosystemDescriptor], featureConfs: Seq[PluginDescriptor]): EcosystemBuilds = {
+  def apply(forced: Set[EcosystemId], ecosystemConfs: Seq[EcosystemDescriptor], featureConfs: Seq[PluginDescriptor]): EcosystemBuilds = {
+    def forceEcosystemCreation(conf: EcosystemDescriptor): Boolean = forced contains conf.id  
     val availableAddOns = findAvailableFeatures(featureConfs)
-    new EcosystemBuilds(ecosystemConfs.map(c => EcosystemBuild(c, availableAddOns, featureConfs)), availableAddOns)
+    new EcosystemBuilds(ecosystemConfs.map(c => EcosystemBuild(c, availableAddOns, featureConfs, forceEcosystemCreation(c))), availableAddOns)
   }
 
   def findAvailableFeatures(featureConfs: Seq[PluginDescriptor]): Map[PluginDescriptor, Seq[AddOn]] = {
