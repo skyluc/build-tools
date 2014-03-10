@@ -330,9 +330,21 @@ object EcosystemBuildsMavenProjects {
       { featureXml(Ecosystem.ScalaIDEFeatureId, scalaIDEVersion.version.toString, "sdt") }
       { featureXml(Ecosystem.ScalaIDESourceFeatureId, scalaIDEVersion.version.toString, "sdt-source") }
       { featureXml(Ecosystem.ScalaIDEDevFeatureId, scalaIDEVersion.version.toString, "dev") }
-      <category-def name="sdt" label="Scala IDE for Eclipse"/>
-      <category-def name="sdt-source" label="Scala IDE for Eclipse Source Feature"/>
-      <category-def name="dev" label="Scala IDE for Eclipse development support"/>
+      <category-def name="sdt" label="Scala IDE for Eclipse">
+        <description>
+          The Scala IDE for Eclipse provides the tools needed to build Scala programs on the Eclipse Platform.
+        </description>
+      </category-def>
+      <category-def name="sdt-source" label="Scala IDE for Eclipse Source Feature">
+        <description>
+          The Scala IDE for Eclipse provides the tools needed to build Scala programs on the Eclipse Platform. This feature provides access (including, e.g. linking) to the IDE plugin's source.
+        </description>
+      </category-def>
+      <category-def name="dev" label="Scala IDE for Eclipse Development Support">
+        <description>
+          The Scala IDE for Eclipse Development support provides tools used to develop Scala-based Eclipse plugins.
+        </description>
+      </category-def>
     </site>
   }
 
