@@ -104,8 +104,10 @@ object Ecosystem {
           val v = new Version(low)
           if (v.getMajor() == 3 && v.getMinor() < 8) {
             Some(EclipseIndigo)
-          } else {
+          } else if (v.getMajor() == 3 && v.getMinor() < 10) {
             Some(EclipseJuno)
+          } else {
+            Some(EclipseLuna)
           }
       }
     }
@@ -116,6 +118,8 @@ object Ecosystem {
   case object EclipseIndigo extends EclipseVersion("indigo", "Indigo", "http://download.eclipse.org/releases/indigo/")
 
   case object EclipseJuno extends EclipseVersion("juno", "Juno", "http://download.eclipse.org/releases/juno/")
+
+  case object EclipseLuna extends EclipseVersion("luna", "Luna", "http://download.eclipse.org/eclipse/updates/4.4milestones/")
 
   def findStrictVersion(range: String) = {
     range match {
