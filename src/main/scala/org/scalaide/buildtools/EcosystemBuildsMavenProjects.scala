@@ -116,7 +116,7 @@ object EcosystemBuildsMavenProjects {
       <packaging>pom</packaging>
       <properties>
         <encoding>UTF-8</encoding>
-        <tycho.version>0.15.0</tycho.version>
+        <tycho.version>0.20.0</tycho.version>
       </properties>
       <modules>
         {
@@ -145,7 +145,7 @@ object EcosystemBuildsMavenProjects {
       <packaging>pom</packaging>
       <properties>
         <encoding>UTF-8</encoding>
-        <tycho.version>0.15.0</tycho.version>
+        <tycho.version>0.20.0</tycho.version>
       </properties>
       <profiles>
         <profile>
@@ -217,7 +217,7 @@ object EcosystemBuildsMavenProjects {
       <packaging>pom</packaging>
       <properties>
         <encoding>UTF-8</encoding>
-        <tycho.version>0.15.0</tycho.version>
+        <tycho.version>0.20.0</tycho.version>
       </properties>
       <profiles>
         <profile>
@@ -285,7 +285,7 @@ object EcosystemBuildsMavenProjects {
       <packaging>eclipse-update-site</packaging>
       <properties>
         <encoding>UTF-8</encoding>
-        <tycho.version>0.15.0</tycho.version>
+        <tycho.version>0.20.0</tycho.version>
         <!-- p2 repositories location -->
         <repo.eclipse.indigo>http://download.eclipse.org/releases/indigo/</repo.eclipse.indigo>
         <!-- dependencies repos -->
@@ -367,7 +367,7 @@ object EcosystemBuildsMavenProjects {
       <packaging>eclipse-update-site</packaging>
       <properties>
         <encoding>UTF-8</encoding>
-        <tycho.version>0.15.0</tycho.version>
+        <tycho.version>0.20.0</tycho.version>
       </properties>
       <repositories>
         <repository>

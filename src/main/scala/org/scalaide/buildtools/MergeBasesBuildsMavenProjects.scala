@@ -52,7 +52,7 @@ object MergeBasesBuildsMavenProjects {
       <packaging>pom</packaging>
       <properties>
         <encoding>UTF-8</encoding>
-        <tycho.version>0.15.0</tycho.version>
+        <tycho.version>0.20.0</tycho.version>
       </properties>
       <build>
         <plugins>
