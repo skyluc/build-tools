@@ -81,6 +81,7 @@ object InstallableUnit {
 trait P2Repository {
   def uis: Map[String, TreeSet[InstallableUnit]]
   def findIU(unitId: String): TreeSet[InstallableUnit]
+  def findIU(unitIdRegex: Regex): TreeSet[InstallableUnit]
   def isValid: Boolean
   def location: String
 }
@@ -90,6 +91,16 @@ case class ValidP2Repository (uis: Map[String, TreeSet[InstallableUnit]], locati
   override def findIU(unitId: String): TreeSet[InstallableUnit] =
     uis get (unitId) getOrElse (TreeSet.empty[InstallableUnit])
 
+
+  def findIU(unitIdRegex: Regex): TreeSet[InstallableUnit] = {
+    val all: List[TreeSet[InstallableUnit]] = uis.collect{
+      case (unitIdRegex(), res) =>
+        res
+    }(collection.breakOut)
+    
+    all.flatten.to[TreeSet]
+  }
+  
   override def isValid = true
     
   override def toString = "P2Repository(%s)".format(location)
@@ -107,8 +118,10 @@ case class ValidP2Repository (uis: Map[String, TreeSet[InstallableUnit]], locati
 
 case class ErrorP2Repository (errorMessage: String, location: String) extends P2Repository {
   override def findIU(unitId: String): TreeSet[InstallableUnit] = TreeSet()
+  override def findIU(unitIdRegex: Regex): TreeSet[InstallableUnit] = TreeSet()
   override def uis: Map[String, TreeSet[InstallableUnit]] = Map()
   override def isValid = false
+  
 }
 
 object P2Repository {

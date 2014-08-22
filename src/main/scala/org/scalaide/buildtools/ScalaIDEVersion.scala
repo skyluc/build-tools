@@ -56,7 +56,13 @@ object ScalaIDEVersion {
   }
 }
 
-case class ScalaIDEVersion private (iu: InstallableUnit, repository: P2Repository, scalaVersion: Version, eclipseVersion: EclipseVersion, associatedExistingAddOns: Map[PluginDescriptor, AddOn], associatedAvailableAddOns: Map[PluginDescriptor, AddOn]) {
+case class ScalaIDEVersion private (
+    iu: InstallableUnit,
+    repository: P2Repository,
+    scalaVersion: Version,
+    eclipseVersion: EclipseVersion,
+    associatedExistingAddOns: Map[PluginDescriptor, AddOn],
+    associatedAvailableAddOns: Map[PluginDescriptor, AddOn]) {
 
   def version = iu.version
 
