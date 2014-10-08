@@ -105,19 +105,24 @@ class UpdateScalaIDEManifests(scalaVersion: String, m2Repo: File, scalaIDERoot: 
     Source.fromInputStream(manifestInputStream, "UTF-8").getLines().collectFirst { case BundleVersion(v) => v }.get
   }
 
-  /**
-   * Set strict version dependency to Scala library and compiler in the given project.
+  /** Set strict version dependency to Scala library and compiler in the given project.
    */
   private def updateManifest(projectPath: String, scalaLibraryVersion: Version) {
-    val manifestFile = new File(new File(scalaIDERoot, projectPath), PluginManifest)
+    val projectFolder = new File(scalaIDERoot, projectPath)
+    val manifestFile = new File(projectFolder, PluginManifest)
+    val templateFiles = new File(projectFolder, PluginManifestTemplatesLocation).listFiles()
 
-    updateBundleManifest(manifestFile,
-      updateVersionInManifest(ScalaLangLibraryId, scalaLibraryVersion).
-        orElse(updateVersionInManifest(ScalaLangCompilerId, scalaLibraryVersion)).
-        orElse {
-          case line =>
-            line
-        })
+    val files = manifestFile :: templateFiles.to[List]
+
+    files.foreach { file =>
+      updateBundleManifest(file,
+        updateVersionInManifest(ScalaLangLibraryId, scalaLibraryVersion).
+          orElse(updateVersionInManifest(ScalaLangCompilerId, scalaLibraryVersion)).
+          orElse {
+            case line =>
+              line
+          })
+    }
   }
 
 }
