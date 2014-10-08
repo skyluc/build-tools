@@ -18,6 +18,8 @@ import scala.collection.mutable.HashMap
 import scala.util.control.Exception.catching
 import java.net.MalformedURLException
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 /**
  * !!! This object not thread safe !!! It was used in a single threaded system when implemented.
  */
@@ -173,7 +175,7 @@ object P2Repository {
     val tmpFile = File.createTempFile("downloaded-content", ".jar")
     val svc = url(repoUrl) / CompressedContentFile
 
-    val downloadHandle = Http(svc > as.File(tmpFile)(null)).either
+    val downloadHandle = Http(svc > as.File(tmpFile)).either
     //    try {
     // get rid of the exception
     val stringExceptionHandle = for (ex <- downloadHandle.left) yield "Error downloading file " + ex.getMessage()

@@ -27,6 +27,7 @@ object Ecosystem {
 
   /** default location of the manifest file in a bundle project */
   val PluginManifest = "META-INF/MANIFEST.MF"
+  val PluginManifestTemplatesLocation = "resources/META-INF/"
   /** default location of the feature description fise in a feature project */
   val FeatureDescriptor = "feature.xml"
   /** default location of the ecosystem configuration */
@@ -44,19 +45,19 @@ object Ecosystem {
   /** regex to find the given bundle id dependency in a manifest file */
   def idInManifest(id: String) = ("(.*" + id + ")(,?.*)").r
   /** regex to find the given bundle id dependency, with a version number defined, in a manifest file */
-  def idInManifestWithVersion(id: String) = ("(.*)" + id + """;bundle-version="([^"]*)"(,?.*)""").r
+  def idInManifestWithVersion(id: String) = ("(.*" + id + """);bundle-version="([^"]*)"(,?.*)""").r
 
   /** create the partial function finding the dependency line corresponding to the given id, and set the version */
-  def updateVersionInManifest(id: String, version: Version): PartialFunction[String, String] =
-    updateVersionInManifest(idInManifestWithVersion(id), idInManifest(id), version)
+  def updateVersionInManifest(pluginId: String, version: Version): PartialFunction[String, String] =
+    updateVersionInManifest(idInManifestWithVersion(pluginId), idInManifest(pluginId), version)
 
   /** method need to create the partial function */
   private def updateVersionInManifest(idWithVersion: Regex, id: Regex, version: Version): PartialFunction[String, String] = {
-    case line @ idWithVersion(_, currentVersion, _) =>
-      warning("%s has already a version number defined: %s".format(ScalaLibraryId, currentVersion))
-      line
+    case line @ idWithVersion(prefixWithId, currentVersion, suffix) =>
+      warning(s"$prefixWithId has already a version number defined: $currentVersion. Replacing.")
+      s"""$prefixWithId;bundle-version="[$version,$version]"$suffix"""
     case id(prefixWithId, suffix) =>
-      """%s;bundle-version="[%s,%<s]"%s""".format(prefixWithId, version, suffix)
+      s"""$prefixWithId;bundle-version="[$version,$version]"$suffix"""
   }
 
   /** update the given manifest, using the provided version updater */
