@@ -67,7 +67,7 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
    */
   private def updateVersions(p2Repo: P2Repository): Either[String, String] = {
     getLatest(p2Repo, ScalaIDEId).right.flatMap { scalaIDE =>
-      if (Version400.compareTo(scalaIDE.version) < 0) {
+      if (Version4_0_0.compareTo(scalaIDE.version) < 0) {
         updateVersions4(p2Repo, scalaIDE)
       } else {
         updateVersions3(p2Repo, scalaIDE)
@@ -179,8 +179,6 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
   /** Set strict version dependency to Scala IDE feature in the given feature file.
    */
   private def updateVersionInFeature(feature: File, scalaIDEFeatureVersion: Version): Either[String, String] = {
-    println(feature.getAbsoluteFile())
-
     val savedFeature = new File(feature.getAbsolutePath() + OriginalSuffix)
 
     if (!savedFeature.exists) {
