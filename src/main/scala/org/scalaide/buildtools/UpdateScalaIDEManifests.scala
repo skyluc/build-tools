@@ -110,14 +110,13 @@ class UpdateScalaIDEManifests(scalaVersion: String, m2Repo: File, scalaIDERoot: 
   private def updateManifest(projectPath: String, scalaLibraryVersion: Version) {
     val projectFolder = new File(scalaIDERoot, projectPath)
     val manifestFile = new File(projectFolder, PluginManifest)
-    val templateFiles = new File(projectFolder, PluginManifestTemplatesLocation).listFiles()
+    val templateFiles = new File(projectFolder, PluginManifestTemplatesLocation).listFiles().to[List].filterNot(_.getName.endsWith(".original"))
 
-    val files = manifestFile :: templateFiles.to[List]
+    val files = manifestFile :: templateFiles
 
     files.foreach { file =>
       updateBundleManifest(file,
-        updateVersionInManifest(ScalaLangLibraryId, scalaLibraryVersion).
-          orElse(updateVersionInManifest(ScalaLangCompilerId, scalaLibraryVersion)).
+        updateVersionInManifest(ScalaLangCompilerId, scalaLibraryVersion).
           orElse {
             case line =>
               line

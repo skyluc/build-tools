@@ -62,25 +62,36 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
     res
   }
 
-  /**
-   * Set strict version dependency to Scala IDE in the plugin and features found under the root, using the
-   * version numbers found in the given p2 repository
+  /** Set strict version dependency to Scala IDE in the plugin and features found under the root, using the
+   *  version numbers found in the given p2 repository
    */
   private def updateVersions(p2Repo: P2Repository): Either[String, String] = {
+    getLatest(p2Repo, ScalaIDEId).right.flatMap { scalaIDE =>
+      if (Version400.compareTo(scalaIDE.version) < 0) {
+        updateVersions4(p2Repo, scalaIDE)
+      } else {
+        updateVersions3(p2Repo, scalaIDE)
+      }
+    }
+  }
+  // ---- Logic before Scala IDE 4.0 ----
+
+  /** Set strict version dependency to Scala IDE in the plugin and features found under the root, using the
+   *  version numbers found in the given p2 repository
+   */
+  private def updateVersions3(p2Repo: P2Repository, scalaIDE: InstallableUnit): Either[String, String] = {
     for {
-      scalaIDE <- getLatest(p2Repo, ScalaIDEId).right
       scalaLibrary <- getLatest(p2Repo, ScalaLangLibraryId, ScalaLibraryId).right
       scalaCompiler <- getLatest(p2Repo, ScalaLangCompilerId, ScalaCompilerId).right
       scalaIDEFeature <- getLatest(p2Repo, ScalaIDEFeatureIdOsgi).right
-      result <- updateVersions(scalaIDE, scalaLibrary, scalaCompiler, scalaIDEFeature).right
+      result <- updateVersions3(scalaIDE, scalaLibrary, scalaCompiler, scalaIDEFeature).right
     } yield result
 
   }
 
-  /**
-   * Set strict version dependency to Scala IDE in the plugin and features found under the root.
+  /** Set strict version dependency to Scala IDE in the plugin and features found under the root.
    */
-  private def updateVersions(scalaIDE: InstallableUnit, scalaLibrary: InstallableUnit, scalaCompiler: InstallableUnit, scalaIDEFeature: InstallableUnit): Either[String, String] = {
+  private def updateVersions3(scalaIDE: InstallableUnit, scalaLibrary: InstallableUnit, scalaCompiler: InstallableUnit, scalaIDEFeature: InstallableUnit): Either[String, String] = {
     val root = new File(rootFolder)
 
     if (root.exists && root.isDirectory) {
@@ -103,17 +114,56 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
     }
   }
 
-  /**
-   * Set strict version dependency to the Scala IDE plugin in the given manifest file.
+  // ---- Logic from Scala IDE 4.0 onward ----
+
+  /** Set strict version dependency to Scala IDE in the plugin and features found under the root, using the
+   *  version numbers found in the given p2 repository
+   */
+  private def updateVersions4(p2Repo: P2Repository, scalaIDE: InstallableUnit): Either[String, String] = {
+    for {
+      scalaCompiler <- findScalaCompiler4(scalaIDE, p2Repo).right
+      result <- updateVersions4(scalaCompiler).right
+    } yield result
+
+  }
+
+  private def findScalaCompiler4(sdtCore: InstallableUnit, p2Repo: P2Repository): Either[String, InstallableUnit] = {
+    val scalaCompiler = for {
+      compilerDep <- sdtCore.dependencies.find(_.id == ScalaLangCompilerId)
+      compilerVersion = findStrictVersion(compilerDep.range)
+      compiler <- p2Repo.findIU(ScalaLangCompilerId).find(_.version == compilerVersion)
+    } yield compiler
+
+    scalaCompiler.map(Right(_)).getOrElse(Left(s"failed to find the Scala compiler version for ${sdtCore}"))
+  }
+
+  /** Set strict version dependency to Scala IDE in the plugin and features found under the root.
+   */
+  private def updateVersions4(scalaCompiler: InstallableUnit): Either[String, String] = {
+    val root = new File(rootFolder)
+
+    if (root.exists && root.isDirectory) {
+      findPlugins(root).foreach {
+        updateVersionInPluginManifest(_,
+          updateVersionInManifest(scalaCompiler.id, scalaCompiler.version)
+            .orElse { case i => i })
+      }
+
+      Right("OK")
+    } else {
+      Left("%s doesn't exist or is not a directory".format(root.getAbsolutePath()))
+    }
+  }
+
+  // --------
+
+  /** Set strict version dependency to the Scala IDE plugin in the given manifest file.
    */
   private def updateVersionInPluginManifest(manifest: File, versionUpdater: PartialFunction[String, String]) {
-    println(manifest.getAbsoluteFile())
-
     updateBundleManifest(manifest, versionUpdater)
   }
 
-  /**
-   * Go through the feature definition XML tree, and add version and match attribute for the reference to the scala IDE feature.
+  /** Go through the feature definition XML tree, and add version and match attribute for the reference to the scala IDE feature.
    */
   private def transformXML(e: Elem, version: Version): Elem = {
     if (e.attributes.get("feature").exists(_.text == ScalaIDEFeatureId)) {
@@ -126,8 +176,7 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
     }
   }
 
-  /**
-   * Set strict version dependency to Scala IDE feature in the given feature file.
+  /** Set strict version dependency to Scala IDE feature in the given feature file.
    */
   private def updateVersionInFeature(feature: File, scalaIDEFeatureVersion: Version): Either[String, String] = {
     println(feature.getAbsoluteFile())
@@ -145,9 +194,8 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
     Right("OK")
   }
 
-  /**
-   * Return the latest version of a plugin available in the repository.
-   * Return an error if the plugin is not available.
+  /** Return the latest version of a plugin available in the repository.
+   *  Return an error if the plugin is not available.
    */
   private def getLatest(p2Repo: P2Repository, pluginId: String): Either[String, InstallableUnit] = {
     p2Repo.findIU(pluginId).headOption match {
@@ -158,8 +206,7 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
     }
   }
 
-  /**
-   * Return the latest version of the plugin pluginId available in the repository, if pluginId cannot be found, check with altPluginID
+  /** Return the latest version of the plugin pluginId available in the repository, if pluginId cannot be found, check with altPluginID
    */
   private def getLatest(p2Repo: P2Repository, pluginId: String, altPluginId: String): Either[String, InstallableUnit] = {
     val res = getLatest(p2Repo, pluginId)
@@ -170,22 +217,19 @@ class UpdateAddonManifests(repoURL: String, rootFolder: String) {
     }
   }
 
-  /**
-   * Return the list of manifest files found in the direct subfolders of the root
+  /** Return the list of manifest files found in the direct subfolders of the root
    */
   private def findPlugins(root: File): List[File] = {
     findFileInSubFolders(root, PluginManifest)
   }
 
-  /**
-   * Return the list of feature definition files found in the direct subfolders of the root
+  /** Return the list of feature definition files found in the direct subfolders of the root
    */
   private def findFeatures(root: File): List[File] = {
     findFileInSubFolders(root, FeatureDescriptor)
   }
 
-  /**
-   * Return the list of instances of the given file existing in the direct subfolders of the root
+  /** Return the list of instances of the given file existing in the direct subfolders of the root
    */
   private def findFileInSubFolders(root: File, fileName: String): List[File] = {
     (for {
