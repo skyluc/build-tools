@@ -6,16 +6,6 @@ import Ecosystem._
 object ScalaIDEVersion {
 
   def apply(iu: InstallableUnit, repository: P2Repository, existingAddOns: Map[PluginDescriptor, Seq[AddOn]], availableAddOns: Map[PluginDescriptor, Seq[AddOn]], siteRepo: P2Repository): ScalaIDEVersion = {
-    val (associatedExistingAddOns, associatedAvailableAddOns) = latestAssociated(availableAddOns, iu.version).foldLeft(latestAssociated(existingAddOns, iu.version)) {
-      (acc, availableAddOn) =>
-        acc.get(availableAddOn._1) match {
-          case Some(existingAddOn) if (existingAddOn.version.compareTo(availableAddOn._2.version) >= 0) =>
-            acc
-          case _ =>
-            acc + availableAddOn
-        }
-    }.partition(_._2.repository == siteRepo)
-
     // the sdt.core bundle
     val sdtCore = (for {
       sdtCoreDep <- iu.dependencies.find(_.id == ScalaIDEId)
@@ -40,29 +30,85 @@ object ScalaIDEVersion {
     }
 
     // the version of Scala it depends on
-    val scalaVersion =
-      sdtCore.dependencies.find(d => d.id == ScalaLibraryId  || d.id == ScalaLangLibraryId)
-        .map(libDep => findStrictVersion(libDep.range))
-        .getOrElse(throw new Exception("failed to find the Scala version for %s".format(iu)))
+    val scalaCompilerVersion =
+      sdtCore.dependencies.find(d => d.id == ScalaCompilerId || d.id == ScalaLangCompilerId)
+        .map { libDep => findStrictVersion(libDep.range) }
+        .getOrElse(throw new Exception("failed to find the Scala compiler version for %s".format(iu)))
 
-    new ScalaIDEVersion(iu, repository, scalaVersion, eclipseVersion, associatedExistingAddOns, associatedAvailableAddOns)
+    val scalaLibraryVersionRange =
+      sdtCore.dependencies.find(d => d.id == ScalaLibraryId || d.id == ScalaLangLibraryId)
+        .map { libDep => VersionRange(libDep.range) }
+        .getOrElse(throw new Exception("failed to find the Scala library version for %s".format(iu)))
+
+    val addOnsFilter: AddOn => Boolean =
+      if (Version4_0_0rc1.compareTo(iu.version) <= 0) {
+        // Scala IDE 4.0.0-rc1 or better
+        { a: AddOn =>
+          a.scalaIDEVersionRange.contains(iu.version) &&
+            a.scalaLibraryVersionRange.map(_ == scalaLibraryVersionRange).getOrElse(false) &&
+            a.scalaCompilerVersion.map(_ == scalaCompilerVersion).getOrElse(true)
+        }
+      } else {
+        // before Scala IDE 4.0.0
+        { a: AddOn =>
+          a.scalaIDEVersion == iu.version
+        }
+      }
+
+    val (associatedExistingAddOns, associatedAvailableAddOns) = latestAssociated(availableAddOns, addOnsFilter).foldLeft(latestAssociated(existingAddOns, addOnsFilter)) {
+      (acc, availableAddOn) =>
+        acc.get(availableAddOn._1) match {
+          case Some(existingAddOn) if (existingAddOn.version.compareTo(availableAddOn._2.version) >= 0) =>
+            acc
+          case _ =>
+            acc + availableAddOn
+        }
+    }.partition(_._2.repository == siteRepo)
+
+    // the version of the sbt feature it depends on
+    val sbtFeatureVersion: Option[Version] =
+      iu.dependencies.find(_.id == SbtFeatureIdOsgi).map { libDep => findStrictVersion(libDep.range) }
+
+    // the version of the sbt feature it depends on
+
+    val scalaFeatureVersion: Option[Version] =
+      iu.dependencies.find { d =>
+        d.id match {
+          case ScalaFeatureIdOsgiRegex() =>
+            true
+          case _ =>
+            false
+        }
+      }.map { libDep => findStrictVersion(libDep.range) }
+
+    new ScalaIDEVersion(
+      iu,
+      repository,
+      scalaCompilerVersion,
+      eclipseVersion,
+      sbtFeatureVersion,
+      None,
+      associatedExistingAddOns,
+      associatedAvailableAddOns)
   }
 
-  private def latestAssociated(addOns: Map[PluginDescriptor, Seq[AddOn]], version: Version): Map[PluginDescriptor, AddOn] = {
+  private def latestAssociated(addOns: Map[PluginDescriptor, Seq[AddOn]], filter: AddOn => Boolean): Map[PluginDescriptor, AddOn] = {
     addOns.flatMap {
       case (conf, addOns) =>
-        addOns.filter(_.scalaIDEVersion == version).headOption.map(conf -> _)
+        addOns.filter(filter).headOption.map(conf -> _)
     }
   }
 }
 
 case class ScalaIDEVersion private (
-    iu: InstallableUnit,
-    repository: P2Repository,
-    scalaVersion: Version,
-    eclipseVersion: EclipseVersion,
-    associatedExistingAddOns: Map[PluginDescriptor, AddOn],
-    associatedAvailableAddOns: Map[PluginDescriptor, AddOn]) {
+  iu: InstallableUnit,
+  repository: P2Repository,
+  scalaVersion: Version,
+  eclipseVersion: EclipseVersion,
+  sbtFeatureVersion: Option[Version],
+  scalaFeatureVersion: Option[Version],
+  associatedExistingAddOns: Map[PluginDescriptor, AddOn],
+  associatedAvailableAddOns: Map[PluginDescriptor, AddOn]) {
 
   def version = iu.version
 
