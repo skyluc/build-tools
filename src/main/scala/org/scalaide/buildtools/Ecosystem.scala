@@ -24,6 +24,9 @@ object Ecosystem {
   val ScalaIDEDevFeatureId = "org.scala-ide.sdt.dev.feature"
   val ScalaIDEFeatureIdOsgi = ScalaIDEFeatureId + FeatureSuffix
   val JDTId = "org.eclipse.jdt.core"
+  val SbtFeatureId = "org.scala-ide.sbt.feature"
+  val SbtFeatureIdOsgi = SbtFeatureId + FeatureSuffix
+  val ScalaFeatureIdOsgiRegex = """org\.scala-ide\.scala\d+\.feature\.feature\.group""".r
 
   /** default location of the manifest file in a bundle project */
   val PluginManifest = "META-INF/MANIFEST.MF"
@@ -38,10 +41,12 @@ object Ecosystem {
   /** regex to find the root option in the command line */
   val RootOption = "--root=(.*)".r
 
-  val RangeRegex = """[\[\(]([^,]*),([^\]\)]*)[\]\)]""".r
+  val RangeRegex = """([\[\(])([^,]*),([^\]\)]*)([\]\)])""".r
   
   val UndefinedVersion = new Version(0, 0, 0)
-  val Version400 = new Version(4, 0, 0)
+  val Version4_0_0 = new Version(4, 0, 0)
+  val Version4_0_0rc1 = new Version(4, 0, 0, "rc1")
+  val UndefinedRange = new VersionRange(UndefinedVersion, true, UndefinedVersion, true)
   
   /** regex to find the given bundle id dependency in a manifest file */
   def idInManifest(id: String) = ("(.*" + id + ")(,?.*)").r
@@ -102,7 +107,7 @@ object Ecosystem {
   object EclipseVersion {
     def apply(range: String): Option[EclipseVersion] = {
       range match {
-        case RangeRegex(low, high) =>
+        case RangeRegex(_, low, high, _) =>
           val v = new Version(low)
           if (v.getMajor() == 3 && v.getMinor() < 8) {
             Some(EclipseIndigo)
@@ -127,12 +132,43 @@ object Ecosystem {
 
   case object EclipseLuna extends EclipseVersion("luna", "Luna", "http://download.eclipse.org/release/luna/")
 
-  def findStrictVersion(range: String) = {
+  def findStrictVersion(range: String): Version =
+    findStrictVersion(VersionRange(range))
+  
+  def findStrictVersion(range: VersionRange): Version = 
     range match {
-      case RangeRegex(low, high) if (low == high) =>
-        new Version(low)
+    case VersionRange(min, true, max, true) if min == max =>
+      min
+    case _ =>
+      UndefinedVersion
+  }
+  
+  case class VersionRange(
+      minVersion: Version,
+      minInclusive: Boolean,
+      maxVersion: Version,
+      maxInclusive: Boolean) {
+    
+    /** Returns `true` if the given version part of this range
+     */
+    def contains(version: Version): Boolean = 
+      (minVersion.compareTo(version) < 0  || minInclusive && minVersion == version) &&
+        (maxVersion.compareTo(version) > 0 || maxInclusive && maxVersion == version)
+    
+  }
+      
+  object VersionRange {
+    def apply(v: String): VersionRange = v match {
+      case RangeRegex("[", min, max, "]") =>
+        new VersionRange(new Version(min), true, new Version(max), true)
+      case RangeRegex("[", min, max, ")") =>
+        new VersionRange(new Version(min), true, new Version(max), false)
+      case RangeRegex("(", min, max, "]") =>
+        new VersionRange(new Version(min), false, new Version(max), true)
+      case RangeRegex("(", min, max, ")") =>
+        new VersionRange(new Version(min), false, new Version(max), false)
       case _ =>
-        UndefinedVersion
+        UndefinedRange
     }
   }
 
