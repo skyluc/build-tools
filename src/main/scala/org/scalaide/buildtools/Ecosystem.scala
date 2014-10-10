@@ -130,7 +130,7 @@ object Ecosystem {
 
   case object EclipseKepler extends EclipseVersion("kepler", "Kepler", "http://download.eclipse.org/releases/kepler/")
 
-  case object EclipseLuna extends EclipseVersion("luna", "Luna", "http://download.eclipse.org/release/luna/")
+  case object EclipseLuna extends EclipseVersion("luna", "Luna", "http://download.eclipse.org/releases/luna/")
 
   def findStrictVersion(range: String): Version =
     findStrictVersion(VersionRange(range))
