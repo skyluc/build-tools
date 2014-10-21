@@ -25,6 +25,7 @@ object Ecosystem {
   val ScalaIDEFeatureIdOsgi = ScalaIDEFeatureId + FeatureSuffix
   val JDTId = "org.eclipse.jdt.core"
   val SbtFeatureId = "org.scala-ide.sbt.feature"
+  val SbtSourceFeatureId = "org.scala-ide.sbt.source.feature"
   val SbtFeatureIdOsgi = SbtFeatureId + FeatureSuffix
   val ScalaFeatureIdOsgiRegex = """org\.scala-ide\.scala\d+\.feature\.feature\.group""".r
 

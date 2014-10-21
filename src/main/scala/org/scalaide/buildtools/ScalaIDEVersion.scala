@@ -71,7 +71,7 @@ object ScalaIDEVersion {
 
     // the version of the sbt feature it depends on
 
-    val scalaFeatureVersion: Option[Version] =
+    val scalaFeature: Option[DependencyUnit] =
       iu.dependencies.find { d =>
         d.id match {
           case ScalaFeatureIdOsgiRegex() =>
@@ -79,7 +79,7 @@ object ScalaIDEVersion {
           case _ =>
             false
         }
-      }.map { libDep => findStrictVersion(libDep.range) }
+      }
 
     new ScalaIDEVersion(
       iu,
@@ -87,7 +87,7 @@ object ScalaIDEVersion {
       scalaCompilerVersion,
       eclipseVersion,
       sbtFeatureVersion,
-      None,
+      scalaFeature,
       associatedExistingAddOns,
       associatedAvailableAddOns)
   }
@@ -106,7 +106,7 @@ case class ScalaIDEVersion private (
   scalaVersion: Version,
   eclipseVersion: EclipseVersion,
   sbtFeatureVersion: Option[Version],
-  scalaFeatureVersion: Option[Version],
+  scalaFeature: Option[DependencyUnit],
   associatedExistingAddOns: Map[PluginDescriptor, AddOn],
   associatedAvailableAddOns: Map[PluginDescriptor, AddOn]) {
 

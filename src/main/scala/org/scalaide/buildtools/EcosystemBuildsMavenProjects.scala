@@ -1,8 +1,8 @@
 package org.scalaide.buildtools
 
 import java.io.File
-
 import Ecosystem._
+import scala.xml.Text
 
 object EcosystemBuildsMavenProjects {
 
@@ -328,7 +328,11 @@ object EcosystemBuildsMavenProjects {
   def createScalaIDESiteXml(scalaIDEVersion: ScalaIDEVersion) = {
     <site>
       { featureXml(Ecosystem.ScalaIDEFeatureId, scalaIDEVersion.version.toString, "sdt") }
+      { scalaIDEVersion.sbtFeatureVersion.map { v => featureXml(Ecosystem.SbtFeatureId, v.toString, "sdt") }.getOrElse{Text("")}}
+      { scalaIDEVersion.scalaFeature.map { d => featureXml(shortFeatureId(d.id), Ecosystem.findStrictVersion(d.range).toString, "sdt") }.getOrElse{Text("")}}
       { featureXml(Ecosystem.ScalaIDESourceFeatureId, scalaIDEVersion.version.toString, "sdt-source") }
+      { scalaIDEVersion.sbtFeatureVersion.map { v => featureXml(Ecosystem.SbtSourceFeatureId, v.toString, "sdt-source") }.getOrElse{Text("")}}
+      { scalaIDEVersion.scalaFeature.map { d => featureXml(shortSourceFeatureId(d.id), Ecosystem.findStrictVersion(d.range).toString, "sdt-source") }.getOrElse{Text("")}}
       { featureXml(Ecosystem.ScalaIDEDevFeatureId, scalaIDEVersion.version.toString, "dev") }
       <category-def name="sdt" label="Scala IDE for Eclipse">
         <description>
@@ -346,6 +350,22 @@ object EcosystemBuildsMavenProjects {
         </description>
       </category-def>
     </site>
+  }
+
+  /** Returns the 'normal' id of a feature from the internal OSGi id of the feature.
+   *
+   *  `com.example.test.feature.feature.group` becomes `com.example.test.feature`.
+   */
+  private def shortFeatureId(osgiFeatureId: String): String = {
+    osgiFeatureId.dropRight(Ecosystem.FeatureSuffix.length)
+  }
+
+  /** Returns the 'normal' id of the source feature associated with the feature of the given internal OSGi id.
+   *
+   *  `com.example.test.feature.feature.group` becomes `com.example.test.source.feature`.
+   */
+  private def shortSourceFeatureId(osgiFeatureId: String): String = {
+    osgiFeatureId.dropRight(Ecosystem.FeatureSuffix.length + ".feature".length) + ".source.feature"
   }
 
   def createAddOnPomXml(addOn: AddOn, scalaIDEVersion: ScalaIDEVersion, parentId: String) = {
