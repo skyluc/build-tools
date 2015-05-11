@@ -15,6 +15,7 @@ object EcosystemBuilds {
       f =>
         (f -> f.updateSites.flatMap(r => findAvailableFeatureVersionsFrom(f, Repositories(r))))
     }.toMap
+      .mapValues { _.sortBy{ _.version }.reverse } // the versions have to be ordered from bigger to smaller
   }
 
   def findAvailableFeaturesFrom(featureConfs: Seq[PluginDescriptor], repo: P2Repository): Map[PluginDescriptor, Seq[AddOn]] = {
@@ -27,6 +28,7 @@ object EcosystemBuilds {
             Some((f -> l))
         }
     }.toMap
+      .mapValues { _.sortBy{ _.version }.reverse } // the versions have to be ordered from bigger to smaller
   }
 
   def findAvailableFeatureVersionsFrom(featureConf: PluginDescriptor, repository: P2Repository): Seq[AddOn] = {
