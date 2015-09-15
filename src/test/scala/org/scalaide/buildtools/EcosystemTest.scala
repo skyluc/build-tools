@@ -3,6 +3,7 @@ package org.scalaide.buildtools
 import org.junit.Test
 import org.junit.Assert._
 import org.osgi.framework.Version
+import Ecosystem._
 
 class EcosystemTest {
 
@@ -34,5 +35,11 @@ class EcosystemTest {
   def findStrictVersionWithoutClassifier {
     val actual = Ecosystem.findStrictVersion("2.0.1")
     assertEquals("Unexpected version", Ecosystem.UndefinedVersion, actual)
+  }
+
+  @Test
+  def parseVersionRangeSingleVersion {
+    val actual = VersionRange("4.2.0")
+    assertEquals("Unexpected range", VersionRange(new Version("4.2.0"), true, MaxVersion, true), actual)
   }
 }

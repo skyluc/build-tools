@@ -41,9 +41,11 @@ object Ecosystem {
   /** regex to find the root option in the command line */
   val RootOption = "--root=(.*)".r
 
+  val VersionReqex = """\d+\.\d+\.\d+.*""".r
   val RangeRegex = """([\[\(])([^,]*),([^\]\)]*)([\]\)])""".r
   
   val UndefinedVersion = new Version(0, 0, 0)
+  val MaxVersion = new Version (Integer.MAX_VALUE, 0, 0)
   val Version4_0_0 = new Version(4, 0, 0)
   val Version4_0_0rc1 = new Version(4, 0, 0, "rc1")
   val UndefinedRange = new VersionRange(UndefinedVersion, true, UndefinedVersion, true)
@@ -158,6 +160,7 @@ object Ecosystem {
   }
       
   object VersionRange {
+
     def apply(v: String): VersionRange = v match {
       case RangeRegex("[", min, max, "]") =>
         new VersionRange(new Version(min), true, new Version(max), true)
@@ -167,6 +170,8 @@ object Ecosystem {
         new VersionRange(new Version(min), false, new Version(max), true)
       case RangeRegex("(", min, max, ")") =>
         new VersionRange(new Version(min), false, new Version(max), false)
+      case VersionReqex() =>
+        new VersionRange(new Version(v), true, MaxVersion, true)
       case _ =>
         UndefinedRange
     }
